@@ -4,7 +4,6 @@ class PredictionRequest(BaseModel):
     # Features required by XGBoost
     item_name: str
     category: str
-    is_on_menu: int
     day_of_week: int
     is_holiday: int
     days_to_payday: int

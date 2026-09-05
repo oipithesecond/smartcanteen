@@ -2,3 +2,5 @@ backend/node_modules
 frontend/node_modules
 .env
 ml_service/__pycache__
+backend/.env
+backend/atlas-credentials.env
