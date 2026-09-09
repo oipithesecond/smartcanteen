@@ -1,16 +1,46 @@
-# React + Vite
+# Smart Canteen — Frontend Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Modern analytics and operations dashboard built with **React 19**, **Vite 8**, **Tailwind CSS 4**, **Recharts**, and **Lucide Icons**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Local Development & Build
 
-## React Compiler
+### 1. Start Development Server
+```bash
+# From repository root or smartcanteen directory:
+cd frontend
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+# Install dependencies (if not already installed)
+npm install
 
-## Expanding the Oxlint configuration
+# Launch Vite dev server with hot reload
+npm run dev
+```
+Navigate to **http://localhost:5173/** in your browser.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+### 2. Build for Production
+```bash
+cd frontend
+npm run build
+```
+Creates an optimized static bundle in `frontend/dist/`.
+
+### 3. Preview Production Build Locally
+```bash
+cd frontend
+npm run preview
+```
+Spins up a local server serving the `dist/` directory at **http://localhost:4173/**.
+
+---
+
+## Brand Assets
+
+Brand assets are located in `frontend/public/` and `frontend/src/assets/`:
+- `public/logo.png`: Full logo with transparent background and tagline.
+- `public/logo-icon.png`: 512×512 circular emblem mark with transparent background.
+- `public/favicon.ico`: Universal multi-resolution ICO file (16px to 64px).
+- `public/favicon.png`: Modern 32×32 / 512×512 PNG favicon.
+- `public/favicon.svg`: Vector/scalable SVG icon.
+- `public/apple-touch-icon.png`: 180×180 iOS home-screen touch icon.

@@ -1,3 +1,100 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --color-surface: #fdf8f7;
+    --color-surface-dim: #ddd9d8;
+    --color-surface-bright: #fdf8f7;
+    --color-surface-container-lowest: #ffffff;
+    --color-surface-container-low: #f7f3f2;
+    --color-surface-container: #f1edec;
+    --color-surface-container-high: #ebe7e6;
+    --color-surface-container-highest: #e5e2e1;
+    --color-on-surface: #1c1b1b;
+    --color-on-surface-variant: #474741;
+    --color-inverse-surface: #313030;
+    --color-inverse-on-surface: #f4f0ef;
+    --color-outline: #777771;
+    --color-outline-variant: #c8c7bf;
+    --color-primary: #000000;
+    --color-secondary: #506354;
+    --color-secondary-container: #d0e5d2;
+    --color-on-secondary-container: #546758;
+    --color-error: #ba1a1a;
+    --color-error-container: #ffdad6;
+    --color-on-error-container: #93000a;
+    --color-tertiary-container: #ffdcc3;
+    --color-on-tertiary-container: #c76c00;
+    --color-border-hairline: #e5e2e1;
+  }
+
+  body {
+    background-color: #fdf8f7;
+    background-image: url('/dashboard-bg.png');
+    background-repeat: repeat;
+    background-position: top left;
+    background-attachment: fixed;
+    background-size: 800px auto;
+    color: #1c1b1b;
+    font-family: 'Hanken Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-display, .font-space {
+    font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom editorial scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c8c7bf;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777771;
+}
+
+/* Pulse animation for map pins */
+@keyframes pulse-ring {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2.4s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+}
+
+/* New Editorial architectural cards */
+.editorial-card {
+  background-color: #ffffff;
+  border: 1px solid #e5e2e1;
+  box-shadow: 0 4px 20px rgba(26, 26, 24, 0.025);
+  border-radius: 4px;
+  transition: border-color 0.2s ease;
+}
+
+.editorial-card:hover {
+  border-color: #c8c7bf;
+}

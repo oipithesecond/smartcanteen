@@ -1,44 +1,41 @@
+// frontend/src/App.jsx
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { DashboardProvider } from './context/DashboardContext';
+import NavigationRail from './components/layout/NavigationRail';
+import Header from './components/layout/Header';
 import Dashboard from './pages/Dashboard';
-import MenuPlanner from './pages/MenuPlanner';
-import EndOfDay from './pages/EndOfDay';
-import MacroPeriods from './pages/MacroPeriods';
-
-function Navigation() {
-  const location = useLocation();
-  const isActive = (path) => location.pathname === path ? "text-blue-200 border-b-2 border-blue-200 pb-1" : "hover:text-blue-200";
-
-  return (
-    <nav className="bg-blue-600 text-white shadow-md">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold tracking-wider">Canteen AI System</Link>
-        <div className="space-x-6">
-          <Link to="/" className={isActive("/")}>Dashboard</Link>
-          <Link to="/plan" className={isActive("/plan")}>Menu Planner</Link>
-          <Link to="/end-of-day" className={isActive("/end-of-day")}>End of Day (Leftovers)</Link>
-          <Link to="/macros" className={isActive("/macros")}>Macro Periods</Link>
-        </div>
-      </div>
-    </nav>
-  );
-}
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-50">
-        <Navigation />
-        <main className="container mx-auto px-4 py-8">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/plan" element={<MenuPlanner />} />
-            <Route path="/end-of-day" element={<EndOfDay />} />
-            <Route path="/macros" element={<MacroPeriods />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <DashboardProvider>
+      <Router>
+        <div 
+          className="min-h-screen text-[#1c1b1b] flex flex-col selection:bg-[#d0e5d2] relative"
+          style={{
+            backgroundImage: "url('/dashboard-bg.png')",
+            backgroundRepeat: 'repeat',
+            backgroundPosition: 'top left',
+            backgroundAttachment: 'fixed',
+            backgroundSize: '800px auto',
+            backgroundColor: '#fdf8f7'
+          }}
+        >
+          {/* Top Full-Width Header with translucent blur */}
+          <Header />
+
+          {/* Main Dashboard Canvas - Offset from left rail with pl-24 */}
+          <main className="flex-1 w-full max-w-7xl mx-auto pl-24 pr-5 sm:pr-8 md:pr-12 py-8 min-w-0 pb-12">
+            <Routes>
+              <Route path="*" element={<Dashboard />} />
+            </Routes>
+          </main>
+
+          {/* Floating Left Navigation Rail (Vertically Centered) */}
+          <NavigationRail />
+        </div>
+      </Router>
+    </DashboardProvider>
   );
 }
 
