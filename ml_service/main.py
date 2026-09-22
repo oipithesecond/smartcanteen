@@ -4,7 +4,13 @@ import pandas as pd
 import numpy as np
 from scipy.stats import norm
 import os
-from schemas import PredictionRequest, PredictionResponse
+from schemas import (
+    PredictionRequest, 
+    PredictionResponse,
+    BatchPredictionRequest, 
+    BatchPredictionResponse, 
+    BatchPredictionItemResponse
+)
 
 app = FastAPI(title="Canteen Demand ML Microservice")
 
@@ -23,18 +29,27 @@ def load_model():
     else:
         print(f"Warning: Model not found at {MODEL_PATH}")
 
-def calculate_optimal_quantity(pred, cost, penalty, rmse_val):
-    if pred <= 0: return 0
-    z = norm.ppf(penalty / (cost + penalty))
-    return max(0, int(round(pred + (z * rmse_val))))
+def calculate_optimal_quantity(pred, cost, penalty, rmse_val, buffer_multiplier=1.0):
+    if pred <= 0: return 0, 0.5, 0.0, 0
+    cr = penalty / (cost + penalty)
+    z = norm.ppf(cr)
+    safety_buffer = int(round(z * rmse_val * buffer_multiplier))
+    optimal = max(0, int(round(pred + safety_buffer)))
+    return optimal, round(float(cr), 3), round(float(z), 2), max(0, safety_buffer)
+
+@app.get("/health")
+def health():
+    return {
+        "status": "healthy", 
+        "model_loaded": model is not None, 
+        "rmse": RMSE_ESTIMATE
+    }
 
 @app.post("/predict", response_model=PredictionResponse)
 def predict_demand(req: PredictionRequest):
     if model is None:
         raise HTTPException(status_code=503, detail="Model is not loaded.")
         
-    # Prepare data for XGBoost (must match training exactly)
-    # The training script used enable_categorical=True, so we need to pass a DataFrame with categorical dtypes
     input_data = {
         'item_name': req.item_name,
         'category': req.category,
@@ -57,18 +72,14 @@ def predict_demand(req: PredictionRequest):
     }
     
     df = pd.DataFrame([input_data])
-    
-    # Convert text columns to pandas categorical types for XGBoost
     categorical_features = ['item_name', 'category', 'macro_dietary_period']
     for col in categorical_features:
         df[col] = df[col].astype('category')
         
-    # Predict raw demand
     raw_pred = model.predict(df)[0]
-    predicted_demand = int(max(0, raw_pred))
+    predicted_demand = int(max(0, round(raw_pred)))
     
-    # Run Phase 4 Newsvendor Optimization
-    optimal_qty = calculate_optimal_quantity(
+    optimal_qty, _, _, _ = calculate_optimal_quantity(
         pred=predicted_demand,
         cost=req.cost_per_portion,
         penalty=req.shortage_penalty,
@@ -80,4 +91,101 @@ def predict_demand(req: PredictionRequest):
         predicted_demand=predicted_demand,
         optimal_cook_qty=optimal_qty,
         rmse_used=RMSE_ESTIMATE
+    )
+
+@app.post("/predict-batch", response_model=BatchPredictionResponse)
+def predict_demand_batch(req: BatchPredictionRequest):
+    if model is None:
+        raise HTTPException(status_code=503, detail="Model is not loaded.")
+        
+    if not req.items:
+        return BatchPredictionResponse(
+            items=[],
+            rmse_used=RMSE_ESTIMATE,
+            model_version="XGBoost v1.0 (enable_categorical)"
+        )
+
+    # 1. Assemble single vectorized dataframe
+    records = []
+    for item in req.items:
+        records.append({
+            'item_name': item.item_name,
+            'category': item.category,
+            'day_of_week': item.day_of_week,
+            'is_holiday': item.is_holiday,
+            'days_to_payday': item.days_to_payday,
+            'is_long_weekend': item.is_long_weekend,
+            'precipitation_mm': item.precipitation_mm,
+            'temp_max_c': item.temp_max_c,
+            'weather_severity_alert': item.weather_severity_alert,
+            'department_meeting_flag': item.department_meeting_flag,
+            'leave_rate_percentage': item.leave_rate_percentage,
+            'macro_dietary_period': item.macro_dietary_period,
+            'recurring_meatless_day': item.recurring_meatless_day,
+            'special_menu_flag': item.special_menu_flag,
+            'demand_lag_1': item.demand_lag_1,
+            'demand_lag_7': item.demand_lag_7,
+            'rolling_mean_7d': item.rolling_mean_7d,
+            'rolling_std_7d': item.rolling_std_7d
+        })
+        
+    df = pd.DataFrame(records)
+    categorical_features = ['item_name', 'category', 'macro_dietary_period']
+    for col in categorical_features:
+        df[col] = df[col].astype('category')
+        
+    # 2. Vectorized prediction across all dishes at once
+    raw_preds = model.predict(df)
+    
+    # 3. Newsvendor formulation per dish
+    results = []
+    multiplier = req.buffer_multiplier if req.buffer_multiplier is not None else 1.0
+
+    for idx, (item, raw_pred) in enumerate(zip(req.items, raw_preds)):
+        pred_demand = int(max(0, round(raw_pred)))
+        cost = item.cost_per_portion if item.cost_per_portion > 0 else 40.0
+        penalty = item.shortage_penalty if item.shortage_penalty > 0 else 80.0
+        
+        cr = penalty / (cost + penalty)
+        z = norm.ppf(cr)
+        
+        # Use dish-specific stdDev if provided and > 0, else model RMSE
+        base_std = item.rolling_std_7d if item.rolling_std_7d > 0 else RMSE_ESTIMATE
+        raw_buffer = round(z * base_std * multiplier)
+        safety_buffer = max(0, int(raw_buffer))
+        optimal_portions = max(0, pred_demand + safety_buffer)
+        
+        portion_kg = item.portion_kg if item.portion_kg and item.portion_kg > 0 else 0.35
+        optimal_kg = round(float(optimal_portions * portion_kg), 1)
+        
+        per_batch = item.portions_per_batch if item.portions_per_batch and item.portions_per_batch > 0 else 40
+        batches = int(np.ceil(optimal_portions / per_batch)) if optimal_portions > 0 else 0
+        batch_unit = item.batch_unit or "Cauldron"
+        batch_display = f"{optimal_portions} portions ({optimal_kg} kg / {batches} {batch_unit}s)"
+        
+        results.append(BatchPredictionItemResponse(
+            id=item.id or f"dish-{idx}",
+            item_name=item.item_name,
+            category=item.category,
+            meal_slot=item.meal_slot or "lunch",
+            portion_kg=portion_kg,
+            batch_unit=batch_unit,
+            portions_per_batch=per_batch,
+            predicted_demand=pred_demand,
+            critical_ratio=round(float(cr), 3),
+            z_score=round(float(z), 2),
+            safety_buffer_portions=safety_buffer,
+            optimal_cook_portions=optimal_portions,
+            optimal_cook_kg=optimal_kg,
+            batches_required=batches,
+            batch_display=batch_display,
+            shifter_reason=item.shifter_reason,
+            shifter_badge_color=item.shifter_badge_color,
+            status=item.status or "Stable"
+        ))
+        
+    return BatchPredictionResponse(
+        items=results,
+        rmse_used=RMSE_ESTIMATE,
+        model_version="XGBoost v1.0 (enable_categorical)"
     )

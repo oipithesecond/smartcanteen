@@ -2,7 +2,13 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { predictDemand, logLeftovers, getAnalytics, getOpenLogs } = require('./controllers/canteenController');
+const { 
+    predictDemand, 
+    getBatchCookPlan, 
+    logLeftovers, 
+    getAnalytics, 
+    getOpenLogs 
+} = require('./controllers/canteenController');
 const macroController = require('./controllers/macroController');
 
 const app = express();
@@ -15,8 +21,10 @@ mongoose.connect(MONGO_URI)
     .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Routes
+// Operational & ML Routes
 app.post('/api/predict', predictDemand);
+app.get('/api/batch-plan', getBatchCookPlan);
+app.post('/api/batch-plan', getBatchCookPlan);
 app.put('/api/log-leftovers', logLeftovers);
 app.get('/api/analytics', getAnalytics);
 app.get('/api/open-logs', getOpenLogs);

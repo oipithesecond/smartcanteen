@@ -34,7 +34,10 @@ export default function BatchCookPlanTable() {
     activeMealSlot,
     setActiveMealSlot,
     activeCategory,
-    setActiveCategory
+    setActiveCategory,
+    isModelLoading,
+    modelMeta,
+    isLiveModel
   } = useDashboard();
 
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,6 +70,32 @@ export default function BatchCookPlanTable() {
           <p className="text-xs text-[#777771] mt-1">
             Machine-calculated prep volume using XGBoost baseline demand & Newsvendor stochastic safety buffers.
           </p>
+
+          <div className="flex flex-wrap items-center gap-2 mt-2.5">
+            <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-space font-semibold border ${
+              isLiveModel 
+                ? 'bg-[#d0e5d2] text-[#0e1f13] border-[#b2d5b6]' 
+                : 'bg-[#f7f3f2] text-[#777771] border-[#e5e2e1]'
+            }`}>
+              <span className={`w-1.5 h-1.5 rounded-full ${isLiveModel ? 'bg-[#1b5e20] animate-pulse' : 'bg-gray-400'}`} />
+              {isLiveModel ? `Live XGBoost (RMSE: ${modelMeta?.modelRmse || 14.26})` : 'Offline Dataset Baseline'}
+            </span>
+            {modelMeta?.weather && (
+              <span className="text-[11px] text-[#777771] font-space bg-[#f7f3f2] px-2 py-0.5 rounded-md border border-[#e5e2e1]">
+                🌤️ Open-Meteo: {modelMeta.weather.tempMaxC}°C • {modelMeta.weather.precipitationMm}mm rain
+              </span>
+            )}
+            {modelMeta?.macroPeriod && modelMeta.macroPeriod !== 'None' && (
+              <span className="text-[11px] text-[#0e1f13] font-space bg-[#ffdad6] px-2 py-0.5 rounded-md border border-[#ffb4ab]">
+                🌙 {modelMeta.macroPeriod} Active
+              </span>
+            )}
+            {isModelLoading && (
+              <span className="text-[11px] text-[#c76c00] font-space font-medium animate-pulse">
+                ⚡ Inferencing...
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Dynamic Newsvendor Buffer Slider Controls */}
@@ -173,7 +202,7 @@ export default function BatchCookPlanTable() {
       </div>
 
       {/* Responsive Table Container */}
-      <div className="overflow-x-auto rounded-2xl border border-[#e5e2e1]">
+      <div className={`overflow-x-auto rounded-2xl border border-[#e5e2e1] transition-opacity duration-150 ${isModelLoading ? 'opacity-60' : 'opacity-100'}`}>
         <table className="w-full text-left border-collapse text-xs">
           <thead>
             <tr className="bg-[#f7f3f2] border-b border-[#e5e2e1] text-[#777771] font-space text-[10px] uppercase tracking-wider">
