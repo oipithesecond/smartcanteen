@@ -9,11 +9,11 @@ import {
   Tooltip, 
   ResponsiveContainer 
 } from 'recharts';
-import { AlertCircle, Grid, SlidersHorizontal } from 'lucide-react';
+import { AlertCircle, Grid } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { SHIFT_EFFICIENCY_DATA } from '../../data/mockCanteenData';
 
-// High-contrast, clean hover tooltip matching the active pattern texture
+// Clean high-contrast tooltip matching the active pattern texture
 const CustomShiftTooltip = ({ active, payload, label, patternStyle }) => {
   if (active && payload && payload.length) {
     const consumed = payload.find((p) => p.dataKey === 'consumedKg')?.value || 0;
@@ -22,19 +22,18 @@ const CustomShiftTooltip = ({ active, payload, label, patternStyle }) => {
     const eff = total > 0 ? ((consumed / total) * 100).toFixed(1) : 0;
 
     return (
-      <div className="bg-white/98 backdrop-blur-md border border-slate-300/80 rounded-xl p-3.5 shadow-2xl ring-1 ring-black/5 min-w-[190px] text-xs font-space z-50">
-        <div className="flex items-center justify-between border-b border-slate-200/80 pb-2 mb-2">
-          <span className="font-bold text-slate-900 text-sm">{label} Service</span>
-          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-[#d0e5d2] text-[#0e1f13]">
+      <div className="bg-white/98 backdrop-blur-md border border-slate-300 rounded-xl p-3.5 shadow-xl text-xs font-space z-50 min-w-[190px]">
+        <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+          <span className="font-bold text-[#1c1b1b] text-sm">{label} Service</span>
+          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1c1b1b] text-white">
             {eff}% Eff
           </span>
         </div>
         
         <div className="space-y-2">
-          {/* Consumed Row */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5 rounded-xs border border-slate-900 shrink-0" viewBox="0 0 14 14">
+              <svg className="w-3.5 h-3.5 rounded-xs border border-[#1c1b1b] shrink-0" viewBox="0 0 14 14">
                 {patternStyle === 'dots' ? (
                   <>
                     <rect width="14" height="14" fill="#ffffff" />
@@ -58,12 +57,11 @@ const CustomShiftTooltip = ({ active, payload, label, patternStyle }) => {
                   </>
                 )}
               </svg>
-              <span className="text-slate-600">Consumed:</span>
+              <span className="text-[#474741]">Consumed:</span>
             </div>
-            <strong className="font-semibold text-slate-900">{consumed} kg</strong>
+            <strong className="font-semibold text-[#1c1b1b]">{consumed} kg</strong>
           </div>
 
-          {/* Wasted Row */}
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-1.5">
               <svg className="w-3.5 h-3.5 rounded-xs border border-[#c76c00] shrink-0" viewBox="0 0 14 14">
@@ -72,14 +70,14 @@ const CustomShiftTooltip = ({ active, payload, label, patternStyle }) => {
                 <line x1="-3" y1="7" x2="7" y2="-3" stroke="#c76c00" strokeWidth="2.5" />
                 <line x1="7" y1="17" x2="17" y2="7" stroke="#c76c00" strokeWidth="2.5" />
               </svg>
-              <span className="text-slate-600">Wasted:</span>
+              <span className="text-[#474741]">Wasted:</span>
             </div>
             <strong className="font-semibold text-[#c76c00]">{wasted} kg</strong>
           </div>
 
-          <div className="flex items-center justify-between gap-4 pt-2 border-t border-slate-200/80">
-            <span className="font-medium text-slate-700">Total Prepared:</span>
-            <strong className="font-bold text-slate-950">{total} kg</strong>
+          <div className="flex items-center justify-between gap-4 pt-2 border-t border-slate-200">
+            <span className="font-medium text-[#1c1b1b]">Total Prepared:</span>
+            <strong className="font-bold text-[#1c1b1b]">{total} kg</strong>
           </div>
         </div>
       </div>
@@ -93,12 +91,11 @@ export default function ShiftEfficiencyChart() {
   const [patternStyle, setPatternStyle] = useState('dots'); // 'dots' | 'slants' | 'crosshatch'
 
   const shiftsData = SHIFT_EFFICIENCY_DATA[selectedDistrict] || SHIFT_EFFICIENCY_DATA.guntur;
-
-  // Identify lowest efficiency shift
   const lowestEfficiencyShift = [...shiftsData].sort((a, b) => a.efficiencyPct - b.efficiencyPct)[0];
 
   return (
-    <section id="analytics" className="bg-white border border-[#e5e2e1] rounded-3xl p-6 md:p-7 shadow-[2px_10px_28px_rgba(28,27,27,0.035),0_1px_3px_rgba(28,27,27,0.02)]">
+    <section id="analytics" className="bg-white border border-[#e5e2e1] rounded-3xl p-6 md:p-7 shadow-[2px_10px_28px_rgba(28,27,27,0.035),0_1px_3px_rgba(28,27,27,0.02)] scroll-mt-24">
+      {/* Title & Hotspot Callout */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
         <div>
           <div className="text-[11px] font-bold tracking-[0.1em] text-[#777771] uppercase">
@@ -112,24 +109,24 @@ export default function ShiftEfficiencyChart() {
           </p>
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#ffdcc3] text-[#c76c00] border border-[#c76c00]/20 text-xs font-medium">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#ffdcc3]/60 text-[#c76c00] border border-[#c76c00]/30 text-xs font-medium self-start sm:self-auto">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-          <span>Waste hotspot: <strong className="font-semibold">{lowestEfficiencyShift.shift}</strong> ({lowestEfficiencyShift.wastedKg} kg discarded)</span>
+          <span>Waste Hotspot: <strong className="font-semibold">{lowestEfficiencyShift.shift}</strong> ({lowestEfficiencyShift.wastedKg} kg thrown out)</span>
         </div>
       </div>
 
-      {/* Pattern Style Switcher & Scale (Legend) */}
+      {/* Pattern Style Switcher & Legend */}
       <div className="flex flex-wrap items-center justify-between gap-3 mb-2 text-xs font-space font-medium text-slate-700">
-        {/* Interactive Pattern Mode Toggle (Dots, Slant Lines, Crosshatch) */}
+        {/* Tactile Pattern Mode Toggle (Dots, Slant Lines, Crosshatch) */}
         <div className="flex items-center gap-1 bg-[#f7f3f2] p-0.5 rounded-xl border border-[#e5e2e1]">
           <button
             onClick={() => setPatternStyle('dots')}
-            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 cursor-pointer ${
               patternStyle === 'dots' 
                 ? 'bg-[#1c1b1b] text-white font-bold shadow-xs' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
-            title="Geometric Dots for Consumed Mass + Stripes for Wasted"
+            title="Geometric Dots for Consumed Mass"
           >
             <span className="w-2 h-2 rounded-full bg-current" />
             <span>Dots & Stripes</span>
@@ -137,7 +134,7 @@ export default function ShiftEfficiencyChart() {
 
           <button
             onClick={() => setPatternStyle('slants')}
-            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 cursor-pointer ${
               patternStyle === 'slants' 
                 ? 'bg-[#1c1b1b] text-white font-bold shadow-xs' 
                 : 'text-slate-600 hover:text-slate-900'
@@ -150,23 +147,22 @@ export default function ShiftEfficiencyChart() {
 
           <button
             onClick={() => setPatternStyle('crosshatch')}
-            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 ${
+            className={`px-2.5 py-1 rounded-lg transition-all text-[11px] flex items-center gap-1.5 cursor-pointer ${
               patternStyle === 'crosshatch' 
                 ? 'bg-[#1c1b1b] text-white font-bold shadow-xs' 
                 : 'text-slate-600 hover:text-slate-900'
             }`}
-            title="Woven Crosshatch Grid for Consumed + Stripes for Wasted"
+            title="Woven Crosshatch Grid"
           >
             <Grid className="w-2.5 h-2.5" />
             <span>Grid Matrix</span>
           </button>
         </div>
 
-        {/* Legend / Scale reflecting the selected pattern */}
+        {/* Legend Swatches */}
         <div className="flex items-center gap-5">
-          {/* Consumed Mass Swatch */}
           <div className="flex items-center gap-2">
-            <svg className="w-4 h-3.5 rounded-xs border border-slate-900 shadow-2xs shrink-0" viewBox="0 0 16 14">
+            <svg className="w-4 h-3.5 rounded-xs border border-[#1c1b1b] shadow-2xs shrink-0" viewBox="0 0 16 14">
               {patternStyle === 'dots' ? (
                 <>
                   <rect width="16" height="14" fill="#ffffff" />
@@ -190,10 +186,9 @@ export default function ShiftEfficiencyChart() {
                 </>
               )}
             </svg>
-            <span className="text-slate-800 font-medium">Consumed Mass</span>
+            <span className="text-[#1c1b1b] font-medium">Consumed Mass</span>
           </div>
 
-          {/* Wasted Scrap Swatch */}
           <div className="flex items-center gap-2">
             <svg className="w-4 h-3.5 rounded-xs border border-[#c76c00] shadow-2xs shrink-0" viewBox="0 0 16 14">
               <rect width="16" height="14" fill="#fffaf5" />
@@ -206,16 +201,15 @@ export default function ShiftEfficiencyChart() {
         </div>
       </div>
 
-      {/* Stacked Recharts Bar Chart with SVG Pattern Fills */}
+      {/* Stacked Recharts Bar Chart with Tactile SVG Hatch Fills */}
       <div className="w-full h-[280px] min-w-0 pt-2 mb-4">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={shiftsData}
             margin={{ top: 10, right: 20, left: 10, bottom: 5 }}
           >
-            {/* SVG Pattern Definitions */}
             <defs>
-              {/* 1. Geometric Dot Grid for Consumed Mass */}
+              {/* Geometric Dot Grid for Consumed Mass */}
               <pattern
                 id="pattern-consumed-dots"
                 width="8"
@@ -226,7 +220,7 @@ export default function ShiftEfficiencyChart() {
                 <circle cx="4" cy="4" r="1.6" fill="#1c1b1b" />
               </pattern>
 
-              {/* 2. Unified Slant Lines for Consumed Mass */}
+              {/* Slant Lines for Consumed Mass */}
               <pattern
                 id="pattern-consumed-slants"
                 width="8"
@@ -238,7 +232,7 @@ export default function ShiftEfficiencyChart() {
                 <line x1="0" y1="0" x2="0" y2="8" stroke="#1c1b1b" strokeWidth="2.5" />
               </pattern>
 
-              {/* 3. Woven Crosshatch Grid for Consumed Mass */}
+              {/* Woven Crosshatch Grid for Consumed Mass */}
               <pattern
                 id="pattern-consumed-crosshatch"
                 width="8"
@@ -267,13 +261,12 @@ export default function ShiftEfficiencyChart() {
             <XAxis dataKey="shift" tick={{ fontSize: 12, fill: '#1c1b1b', fontFamily: 'Space Grotesk' }} />
             <YAxis tick={{ fontSize: 11, fill: '#777771' }} unit=" kg" />
             
-            {/* Custom Tooltip with matching pattern context */}
             <Tooltip 
               content={<CustomShiftTooltip patternStyle={patternStyle} />} 
-              cursor={{ fill: 'rgba(80, 99, 84, 0.06)', radius: 4 }} 
+              cursor={{ fill: 'rgba(28, 27, 27, 0.04)', radius: 4 }} 
             />
 
-            {/* Consumed Mass Bar - Dynamically takes active pattern */}
+            {/* Consumed Mass Bar */}
             <Bar 
               dataKey="consumedKg" 
               name="Consumed Mass" 
@@ -283,7 +276,7 @@ export default function ShiftEfficiencyChart() {
               strokeWidth={1.2} 
             />
 
-            {/* Wasted Scrap Bar - Diagonal Stripes */}
+            {/* Wasted Scrap Bar */}
             <Bar 
               dataKey="wastedKg" 
               name="Wasted Scrap" 
@@ -297,7 +290,7 @@ export default function ShiftEfficiencyChart() {
         </ResponsiveContainer>
       </div>
 
-      {/* 4 Shift Cards Breakdown */}
+      {/* 4 Shift Cards Breakdown (Clean Monochrome + Subtle Highlight) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {shiftsData.map((shift) => {
           const isProblematic = shift.efficiencyPct < 85;
@@ -306,13 +299,13 @@ export default function ShiftEfficiencyChart() {
             <div 
               key={shift.shift} 
               className={`p-4 rounded-2xl border transition-all hover:shadow-xs ${
-                isProblematic ? 'bg-[#ffdad6]/40 border-[#ba1a1a]/20' : 'bg-[#fdf8f7] border-[#e5e2e1]'
+                isProblematic ? 'bg-[#fffaf5] border-[#ffdcc3]' : 'bg-[#fcfaf9] border-[#e5e2e1]'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <span className="font-bold text-xs text-[#1c1b1b] font-space">{shift.shift}</span>
                 <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
-                  isProblematic ? 'bg-[#ffdad6] text-[#ba1a1a]' : 'bg-[#d0e5d2] text-[#0e1f13]'
+                  isProblematic ? 'bg-[#ffdcc3] text-[#c76c00]' : 'bg-[#1c1b1b] text-white'
                 }`}>
                   {shift.efficiencyPct}% Eff
                 </span>
@@ -325,12 +318,14 @@ export default function ShiftEfficiencyChart() {
 
               <div className="flex items-baseline justify-between text-xs mt-1">
                 <span className="text-[#777771]">Consumed:</span>
-                <span className="font-space font-semibold text-[#506354]">{shift.consumedKg} kg</span>
+                <span className="font-space font-semibold text-[#1c1b1b]">{shift.consumedKg} kg</span>
               </div>
 
               <div className="flex items-baseline justify-between text-xs mt-1">
                 <span className="text-[#777771]">Wasted:</span>
-                <span className="font-space font-semibold text-[#ba1a1a]">{shift.wastedKg} kg</span>
+                <span className={`font-space font-semibold ${isProblematic ? 'text-[#c76c00]' : 'text-[#777771]'}`}>
+                  {shift.wastedKg} kg
+                </span>
               </div>
             </div>
           );

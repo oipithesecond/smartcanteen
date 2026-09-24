@@ -24,7 +24,7 @@ export default function ApRegionalMap() {
   const activeHoverData = hoveredDistrict ? DISTRICT_METADATA[hoveredDistrict] : null;
 
   return (
-    <section id="ap-map" className="space-y-4 pt-2">
+    <section id="ap-map" className="space-y-4 pt-2 scroll-mt-24">
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[11px] font-bold tracking-[0.1em] text-[#777771] uppercase">

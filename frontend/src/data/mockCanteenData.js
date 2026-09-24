@@ -1122,15 +1122,42 @@ export function getAugmentedBatchCookPlan(districtId, bufferMultiplier = 1.0) {
 }
 
 export const USERS = [
+  // --- ADMIN PROFILES (Statewide AP Access) ---
   {
     id: 'admin-rao',
     name: 'K. S. Rao',
     role: 'ADMIN',
-    roleLabel: 'Admin (Andhra Regional)',
+    roleLabel: 'Admin (State Dining Director)',
     title: 'State Dining Operations Director',
     assignedDistrict: 'amaravati',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=120&auto=format&fit=crop&q=80'
+    department: 'AP State Canteen Authority - Amaravati Secretariat',
+    badge: 'Statewide Admin',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
   },
+  {
+    id: 'admin-ananya',
+    name: 'Dr. Ananya Sharma',
+    role: 'ADMIN',
+    roleLabel: 'Admin (Chief Waste Auditor)',
+    title: 'Chief Sustainability & Carbon Auditor',
+    assignedDistrict: 'amaravati',
+    department: 'State Green Protocol & Waste Mitigation Cell',
+    badge: 'Statewide Admin',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'admin-rajesh',
+    name: 'Rajesh Varma',
+    role: 'ADMIN',
+    roleLabel: 'Admin (Regional Logistics Lead)',
+    title: 'Central Supply Chain & Procurement Lead',
+    assignedDistrict: 'vijayawada',
+    department: 'Krishna-Guntur Food Logistics Network',
+    badge: 'Statewide Admin',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'
+  },
+
+  // --- KITCHEN USER / MANAGER PROFILES (District Locked) ---
   {
     id: 'mgr-suresh',
     name: 'Suresh Reddy',
@@ -1138,16 +1165,20 @@ export const USERS = [
     roleLabel: 'Manager (Guntur Central)',
     title: 'Kitchen Floor & Production Manager',
     assignedDistrict: 'guntur',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=120&auto=format&fit=crop&q=80'
+    department: 'Guntur Central Canteen Kitchen Floor',
+    badge: 'Guntur Floor',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
   },
   {
     id: 'mgr-lakshmi',
     name: 'Lakshmi Priya',
     role: 'OUTLET_MANAGER',
-    roleLabel: 'Manager (Amaravati Core)',
+    roleLabel: 'Executive Chef (Amaravati Core)',
     title: 'Executive Head Chef - Amaravati',
     assignedDistrict: 'amaravati',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=120&auto=format&fit=crop&q=80'
+    department: 'Secretariat & High Court Dining Complex',
+    badge: 'Amaravati Floor',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
   },
   {
     id: 'mgr-venkatesh',
@@ -1156,6 +1187,121 @@ export const USERS = [
     roleLabel: 'Manager (Vijayawada Hub)',
     title: 'Transit Kitchen Floor Supervisor',
     assignedDistrict: 'vijayawada',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=120&auto=format&fit=crop&q=80'
+    department: 'Vijayawada Multi-Modal Kitchen Hub',
+    badge: 'Vijayawada Floor',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'user-pooja',
+    name: 'Pooja Sundaram',
+    role: 'OUTLET_MANAGER',
+    roleLabel: 'Staff (Quality & Nutrition QA)',
+    title: 'Dietary Compliance & Quality Officer',
+    assignedDistrict: 'guntur',
+    department: 'Guntur Agricultural University Dining Unit',
+    badge: 'Guntur Staff',
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80'
+  },
+  {
+    id: 'user-manoj',
+    name: 'Manoj Kumar',
+    role: 'OUTLET_MANAGER',
+    roleLabel: 'Staff (Cold Storage & Pantry Lead)',
+    title: 'Perishable Inventory & Pantry Lead',
+    assignedDistrict: 'vijayawada',
+    department: 'Vijayawada Central Perishable Store',
+    badge: 'Vijayawada Staff',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80'
   }
 ];
+
+/**
+ * Plate Waste vs Preparation Overproduction Telemetry
+ */
+export const PLATE_VS_PREP_DATA = {
+  guntur: {
+    totalWasteKg: 178,
+    prepWasteKg: 104,
+    plateWasteKg: 74,
+    prepWasteCost: 8320,
+    plateWasteCost: 5920,
+    services: [
+      { service: 'Breakfast', prepKg: 18, plateKg: 10, prepPct: 64, platePct: 36, driver: 'Excess Idli batter steamed too early' },
+      { service: 'Lunch', prepKg: 46, plateKg: 29, prepPct: 61, platePct: 39, driver: 'Sambar & Gongura rice overproduction' },
+      { service: 'Snacks', prepKg: 8, plateKg: 11, prepPct: 42, platePct: 58, driver: 'Chutney portion cups left unconsumed' },
+      { service: 'Dinner', prepKg: 32, plateKg: 24, prepPct: 57, platePct: 43, driver: 'Late walk-ins drop off after 21:00' },
+    ],
+    chefObservation: 'Rice over-portioning on 1st helping drives 68% of lunch plate scrapings. Recommending dual-scoop policy.',
+    chefSigned: 'Suresh R.',
+    station: 'Guntur Central Station #2'
+  },
+  amaravati: {
+    totalWasteKg: 111,
+    prepWasteKg: 52,
+    plateWasteKg: 59,
+    prepWasteCost: 4420,
+    plateWasteCost: 5015,
+    services: [
+      { service: 'Breakfast', prepKg: 11, plateKg: 14, prepPct: 44, platePct: 56, driver: 'Pesarattu upma heavy portions' },
+      { service: 'Lunch', prepKg: 24, plateKg: 34, prepPct: 41, platePct: 59, driver: 'Secretariat thali fixed side dishes untouched' },
+      { service: 'Snacks', prepKg: 6, plateKg: 4, prepPct: 60, platePct: 40, driver: 'Dibba rotti pan batch excess' },
+      { service: 'Dinner', prepKg: 11, plateKg: 7, prepPct: 61, platePct: 39, driver: 'Predictable dinner flow from resident staff' },
+    ],
+    chefObservation: 'Executive lunch thalis contain 5 fixed cups; bitter gourd & radish sides generate 40kg plate waste.',
+    chefSigned: 'Lakshmi P.',
+    station: 'Amaravati Complex Station #1'
+  },
+  vijayawada: {
+    totalWasteKg: 434,
+    prepWasteKg: 282,
+    plateWasteKg: 152,
+    prepWasteCost: 22560,
+    plateWasteCost: 12160,
+    services: [
+      { service: 'Breakfast', prepKg: 42, plateKg: 26, prepPct: 62, platePct: 38, driver: 'Train arrival delay caused morning idle hot trays' },
+      { service: 'Lunch', prepKg: 118, plateKg: 57, prepPct: 67, platePct: 33, driver: 'Biryani batch size too large for late afternoon' },
+      { service: 'Snacks', prepKg: 24, plateKg: 18, prepPct: 57, platePct: 43, driver: 'Deep fried vadas past holding temperature' },
+      { service: 'Dinner', prepKg: 98, plateKg: 51, prepPct: 66, platePct: 34, driver: 'Cancelled night express trains stranded 120kg meals' },
+    ],
+    chefObservation: 'Unannounced railway schedule changes cause mass cauldron waste. Integrating IRCTC arrival webhook planned.',
+    chefSigned: 'K. Venkatesh',
+    station: 'Vijayawada Junction Bay #5'
+  }
+};
+
+/**
+ * 7-Day Actual vs. XGBoost Predicted Demand & Newsvendor Buffer Horizon
+ */
+export const FORECAST_HORIZON_DATA = {
+  guntur: [
+    { day: 'Thu', date: 'Sep 18', actual: 2340, predicted: 2310, optimalBuffer: 2390, weather: '☀️ Clear', accuracy: 98.7, status: 'Matched' },
+    { day: 'Fri', date: 'Sep 19', actual: 2490, predicted: 2460, optimalBuffer: 2545, weather: '☀️ Clear', accuracy: 98.8, status: 'Matched' },
+    { day: 'Sat', date: 'Sep 20', actual: 2150, predicted: 2180, optimalBuffer: 2260, weather: '⛅ Overcast', accuracy: 98.6, status: 'Matched' },
+    { day: 'Sun', date: 'Sep 21', actual: 2680, predicted: 2610, optimalBuffer: 2710, weather: '🌧️ Rain Surge', accuracy: 97.4, status: 'Buffer Protected' },
+    { day: 'Mon', date: 'Sep 22', actual: 2410, predicted: 2430, optimalBuffer: 2515, weather: '☀️ Clear', accuracy: 99.2, status: 'Matched' },
+    { day: 'Tue', date: 'Sep 23', actual: 2290, predicted: 2270, optimalBuffer: 2355, weather: '🥦 Meatless', accuracy: 99.1, status: 'Matched' },
+    { day: 'Wed', date: 'Today', actual: 2486, predicted: 2450, optimalBuffer: 2540, weather: '⛈️ Storm Alert', accuracy: 98.5, status: 'Matched' },
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2520, optimalBuffer: 2615, weather: '🌤️ 32.6°C', accuracy: null, status: 'XGBoost Inferred' }
+  ],
+  amaravati: [
+    { day: 'Thu', date: 'Sep 18', actual: 2710, predicted: 2680, optimalBuffer: 2760, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
+    { day: 'Fri', date: 'Sep 19', actual: 2830, predicted: 2800, optimalBuffer: 2885, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
+    { day: 'Sat', date: 'Sep 20', actual: 1620, predicted: 1650, optimalBuffer: 1720, weather: 'Weekend', accuracy: 98.2, status: 'Matched' },
+    { day: 'Sun', date: 'Sep 21', actual: 1480, predicted: 1450, optimalBuffer: 1530, weather: 'Weekend', accuracy: 98.0, status: 'Matched' },
+    { day: 'Mon', date: 'Sep 22', actual: 2790, predicted: 2760, optimalBuffer: 2850, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
+    { day: 'Tue', date: 'Sep 23', actual: 2750, predicted: 2720, optimalBuffer: 2810, weather: '🥦 Meatless', accuracy: 98.9, status: 'Matched' },
+    { day: 'Wed', date: 'Today', actual: 2840, predicted: 2815, optimalBuffer: 2905, weather: '☀️ 29.5°C', accuracy: 99.1, status: 'Matched' },
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2890, optimalBuffer: 2980, weather: '🌤️ Session Day 4', accuracy: null, status: 'XGBoost Inferred' }
+  ],
+  vijayawada: [
+    { day: 'Thu', date: 'Sep 18', actual: 3120, predicted: 3080, optimalBuffer: 3200, weather: '🚆 Peak Transit', accuracy: 98.7, status: 'Matched' },
+    { day: 'Fri', date: 'Sep 19', actual: 3450, predicted: 3380, optimalBuffer: 3510, weather: '🚆 Holiday Rush', accuracy: 97.9, status: 'Buffer Protected' },
+    { day: 'Sat', date: 'Sep 20', actual: 3380, predicted: 3320, optimalBuffer: 3460, weather: 'Transit High', accuracy: 98.2, status: 'Matched' },
+    { day: 'Sun', date: 'Sep 21', actual: 3560, predicted: 3490, optimalBuffer: 3620, weather: 'Return Rush', accuracy: 98.0, status: 'Buffer Protected' },
+    { day: 'Mon', date: 'Sep 22', actual: 3190, predicted: 3150, optimalBuffer: 3270, weather: 'Normal', accuracy: 98.7, status: 'Matched' },
+    { day: 'Tue', date: 'Sep 23', actual: 2980, predicted: 2940, optimalBuffer: 3050, weather: '🥦 Meatless', accuracy: 98.7, status: 'Matched' },
+    { day: 'Wed', date: 'Today', actual: 3250, predicted: 3210, optimalBuffer: 3340, weather: '🌤️ 31.8°C', accuracy: 98.8, status: 'Matched' },
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 3310, optimalBuffer: 3445, weather: '🚆 Normal Schedule', accuracy: null, status: 'XGBoost Inferred' }
+  ]
+};
+

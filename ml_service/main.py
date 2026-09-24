@@ -37,6 +37,53 @@ def calculate_optimal_quantity(pred, cost, penalty, rmse_val, buffer_multiplier=
     optimal = max(0, int(round(pred + safety_buffer)))
     return optimal, round(float(cr), 3), round(float(z), 2), max(0, safety_buffer)
 
+TRAINED_CATEGORIES = {
+    'item_name': ['Chicken Dum Biryani', 'Chole Soya Chunks Curry', 'Egg Bhurji', 'Masala Fish Fry', 'Mudda Pappu', 'Paneer Butter Masala', 'Pulka', 'White Rice'],
+    'category': ['Non_Veg_Mains', 'Staples', 'Veg_Mains'],
+    'macro_dietary_period': ['0', 'Navratri', 'Ramadan', 'Shravan']
+}
+ITEM_CAT_DTYPE = pd.CategoricalDtype(categories=TRAINED_CATEGORIES['item_name'])
+CATEGORY_CAT_DTYPE = pd.CategoricalDtype(categories=TRAINED_CATEGORIES['category'])
+MACRO_CAT_DTYPE = pd.CategoricalDtype(categories=TRAINED_CATEGORIES['macro_dietary_period'])
+
+def clean_record_for_model(rec: dict) -> dict:
+    rec = dict(rec)
+    macro = str(rec.get('macro_dietary_period', '0') or '0').strip()
+    if macro in ('None', 'none', '', '0', 'null', 'undefined'):
+        rec['macro_dietary_period'] = '0'
+    elif macro in TRAINED_CATEGORIES['macro_dietary_period']:
+        rec['macro_dietary_period'] = macro
+    else:
+        rec['macro_dietary_period'] = '0'
+        
+    cat = str(rec.get('category', 'Veg_Mains') or 'Veg_Mains').strip()
+    if cat in TRAINED_CATEGORIES['category']:
+        rec['category'] = cat
+    elif any(k in cat.lower() for k in ['non_veg', 'chicken', 'meat', 'fish', 'egg', 'mutton', 'prawn']):
+        rec['category'] = 'Non_Veg_Mains'
+    elif any(k in cat.lower() for k in ['staple', 'rice', 'roti', 'pulka', 'bread', 'tiffin', 'breakfast']):
+        rec['category'] = 'Staples'
+    else:
+        rec['category'] = 'Veg_Mains'
+        
+    name = str(rec.get('item_name', '') or '').strip()
+    if name not in TRAINED_CATEGORIES['item_name']:
+        matched = None
+        for trained in TRAINED_CATEGORIES['item_name']:
+            if trained.lower() in name.lower() or name.lower() in trained.lower():
+                matched = trained
+                break
+        rec['item_name'] = matched if matched else None
+    return rec
+
+def prepare_dataframe(records: list) -> pd.DataFrame:
+    cleaned = [clean_record_for_model(r) for r in records]
+    df = pd.DataFrame(cleaned)
+    df['item_name'] = df['item_name'].astype(ITEM_CAT_DTYPE)
+    df['category'] = df['category'].astype(CATEGORY_CAT_DTYPE)
+    df['macro_dietary_period'] = df['macro_dietary_period'].astype(MACRO_CAT_DTYPE)
+    return df
+
 @app.get("/health")
 def health():
     return {
@@ -71,11 +118,7 @@ def predict_demand(req: PredictionRequest):
         'rolling_std_7d': req.rolling_std_7d
     }
     
-    df = pd.DataFrame([input_data])
-    categorical_features = ['item_name', 'category', 'macro_dietary_period']
-    for col in categorical_features:
-        df[col] = df[col].astype('category')
-        
+    df = prepare_dataframe([input_data])
     raw_pred = model.predict(df)[0]
     predicted_demand = int(max(0, round(raw_pred)))
     
@@ -129,11 +172,7 @@ def predict_demand_batch(req: BatchPredictionRequest):
             'rolling_std_7d': item.rolling_std_7d
         })
         
-    df = pd.DataFrame(records)
-    categorical_features = ['item_name', 'category', 'macro_dietary_period']
-    for col in categorical_features:
-        df[col] = df[col].astype('category')
-        
+    df = prepare_dataframe(records)
     # 2. Vectorized prediction across all dishes at once
     raw_preds = model.predict(df)
     

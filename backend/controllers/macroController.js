@@ -1,7 +1,11 @@
+const mongoose = require('mongoose');
 const MacroPeriod = require('../models/MacroPeriod');
 
 exports.getMacros = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json([]);
+        }
         const macros = await MacroPeriod.find().sort({ startDate: 1 });
         res.status(200).json(macros);
     } catch (err) {

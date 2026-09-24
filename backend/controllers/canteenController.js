@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const DailyLog = require('../models/DailyLog');
 const MacroPeriod = require('../models/MacroPeriod');
 const { MENU_ITEMS_BY_DISTRICT } = require('../data/menuCatalogue');
@@ -31,6 +32,9 @@ async function fetchWeather(targetDate, district = 'guntur') {
 }
 
 async function getActiveMacro(targetDate, district = 'guntur') {
+    if (mongoose.connection.readyState !== 1) {
+        return "None";
+    }
     try {
         const macros = await MacroPeriod.find({
             startDate: { $lte: targetDate },
@@ -151,10 +155,12 @@ exports.predictDemand = async (req, res) => {
                 costOfShortage: 0
             }
         });
-        await newLog.save();
+        if (mongoose.connection.readyState === 1) {
+            await newLog.save();
+        }
 
         res.status(201).json({ 
-            message: "Prediction successful, log opened.", 
+            message: mongoose.connection.readyState === 1 ? "Prediction successful, log opened." : "Prediction successful (memory mode, MongoDB not connected).", 
             data: newLog, 
             weather, 
             macroName 
@@ -307,6 +313,12 @@ exports.getBatchCookPlan = async (req, res) => {
 exports.logLeftovers = async (req, res) => {
     try {
         const { logId, actualPreparedQty, leftoverQty } = req.body;
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json({ 
+                message: "Leftovers logged (offline mode: MongoDB not connected).", 
+                data: { _id: logId, actualPreparedQty, leftoverQty } 
+            });
+        }
         const log = await DailyLog.findById(logId);
         if (!log) return res.status(404).json({ error: "Log not found" });
         if (log.isClosed) return res.status(400).json({ error: "Log is already closed" });
@@ -342,6 +354,9 @@ exports.logLeftovers = async (req, res) => {
 
 exports.getAnalytics = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json({ totalWaste: 0, totalWasteKg: 0, totalCostLost: 0, avgAbsoluteError: 0 });
+        }
         const { district } = req.query;
         const match = { isClosed: true };
         if (district && district !== 'all') {
@@ -378,6 +393,9 @@ exports.getAnalytics = async (req, res) => {
 
 exports.getOpenLogs = async (req, res) => {
     try {
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json([]);
+        }
         const { district } = req.query;
         const query = { isClosed: false };
         if (district && district !== 'all') {

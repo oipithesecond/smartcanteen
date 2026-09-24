@@ -13,13 +13,81 @@ export function DashboardProvider({ children }) {
   const [activeMealSlot, setActiveMealSlot] = useState('all');
   const [timeRange, setTimeRange] = useState('today');
   const [bufferMultiplier, setBufferMultiplier] = useState(1.0);
-  const [activeNav, setActiveNav] = useState('dashboard');
   const [isRoleMenuOpen, setIsRoleMenuOpen] = useState(false);
 
   // Live Machine Learning Batch Plan State
   const [liveBatchPlan, setLiveBatchPlan] = useState(null);
   const [isModelLoading, setIsModelLoading] = useState(false);
   const [modelMeta, setModelMeta] = useState(null);
+
+  // Real-time Machine Learning Health & Connection Status
+  const [mlHealth, setMlHealth] = useState({
+    connected: false,
+    status: 'checking',
+    latencyMs: null,
+    serviceUrl: 'http://127.0.0.1:8000',
+    modelName: 'XGBoost v1.0 Regressor',
+    rmse: 14.26,
+    featuresCount: 18,
+    error: null,
+    checkedAt: null
+  });
+  const [isCheckingMl, setIsCheckingMl] = useState(false);
+  const [isMlModalOpen, setIsMlModalOpen] = useState(false);
+
+  // Ping ML Health endpoint
+  const checkMlHealth = useCallback(async () => {
+    setIsCheckingMl(true);
+    try {
+      const res = await axios.get(`${API_BASE}/ml-health`, { timeout: 3500 });
+      setMlHealth(res.data);
+      return res.data;
+    } catch (err) {
+      const fallback = {
+        connected: false,
+        status: 'offline',
+        serviceUrl: 'http://127.0.0.1:8000',
+        error: err.message || 'Cannot reach API Gateway or ML Service',
+        checkedAt: new Date().toISOString()
+      };
+      setMlHealth(fallback);
+      return fallback;
+    } finally {
+      setIsCheckingMl(false);
+    }
+  }, []);
+
+  // Poll ML health on mount and every 25 seconds
+  useEffect(() => {
+    checkMlHealth();
+    const interval = setInterval(checkMlHealth, 25000);
+    return () => clearInterval(interval);
+  }, [checkMlHealth]);
+
+  // Dual-Audience Mode: Simple / Visual Mode by default (false), Nerd Mode when enabled (true)
+  const [isNerdMode, setIsNerdModeState] = useState(() => {
+    try {
+      return localStorage.getItem('smartcanteen_nerd_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  const setIsNerdMode = useCallback((val) => {
+    setIsNerdModeState((prev) => {
+      const next = typeof val === 'function' ? val(prev) : val;
+      try {
+        localStorage.setItem('smartcanteen_nerd_mode', String(next));
+      } catch {
+        // ignore storage errors
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleNerdMode = useCallback(() => {
+    setIsNerdMode((prev) => !prev);
+  }, [setIsNerdMode]);
 
   // Safe district updater enforcing RBAC boundaries
   const setSelectedDistrict = useCallback((districtId) => {
@@ -95,7 +163,9 @@ export function DashboardProvider({ children }) {
     return getAugmentedBatchCookPlan(selectedDistrict, bufferMultiplier);
   }, [liveBatchPlan, selectedDistrict, bufferMultiplier]);
 
-  const value = {
+  const isLiveModel = Boolean((liveBatchPlan && liveBatchPlan.length > 0) || mlHealth.connected);
+
+  const value = useMemo(() => ({
     currentUser,
     currentRole: currentUser.role,
     isAdmin: currentUser.role === 'ADMIN',
@@ -111,8 +181,6 @@ export function DashboardProvider({ children }) {
     setTimeRange,
     bufferMultiplier,
     setBufferMultiplier,
-    activeNav,
-    setActiveNav,
     isRoleMenuOpen,
     setIsRoleMenuOpen,
     switchUser,
@@ -120,8 +188,38 @@ export function DashboardProvider({ children }) {
     batchCookPlan,
     isModelLoading,
     modelMeta,
-    isLiveModel: Boolean(liveBatchPlan && liveBatchPlan.length > 0)
-  };
+    isLiveModel,
+    mlHealth,
+    isCheckingMl,
+    checkMlHealth,
+    isMlModalOpen,
+    setIsMlModalOpen,
+    isNerdMode,
+    setIsNerdMode,
+    toggleNerdMode
+  }), [
+    currentUser,
+    selectedDistrict,
+    setSelectedDistrict,
+    currentDistrictMeta,
+    activeCategory,
+    activeMealSlot,
+    timeRange,
+    bufferMultiplier,
+    isRoleMenuOpen,
+    switchUser,
+    batchCookPlan,
+    isModelLoading,
+    modelMeta,
+    isLiveModel,
+    mlHealth,
+    isCheckingMl,
+    checkMlHealth,
+    isMlModalOpen,
+    isNerdMode,
+    setIsNerdMode,
+    toggleNerdMode
+  ]);
 
   return (
     <DashboardContext.Provider value={value}>
