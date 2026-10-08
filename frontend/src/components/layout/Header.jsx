@@ -1,12 +1,14 @@
 // frontend/src/components/layout/Header.jsx
 import React, { useState, useRef, useEffect, useMemo } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Bell, 
   Lock,
   Compass,
   ChevronDown,
   Sliders,
-  Eye
+  Eye,
+  Scale
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
 import { DISTRICT_METADATA } from '../../data/mockCanteenData';
@@ -37,6 +39,7 @@ export default function Header() {
     toggleNerdMode
   } = useDashboard();
 
+  const location = useLocation();
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
   const [isMobileSectionOpen, setIsMobileSectionOpen] = useState(false);
   const headerMenuRef = useRef(null);
@@ -90,8 +93,49 @@ export default function Header() {
         </a>
       </div>
 
+      {/* Navigation Tabs: Dashboard vs Food Weight Logging */}
+      <div className="hidden lg:flex items-center bg-[#f1edec] p-0.5 rounded-full border border-[#e5e2e1] text-xs font-space ml-2 sm:ml-4">
+        <Link
+          to="/"
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+            location.pathname === '/' 
+              ? 'bg-[#1c1b1b] text-white font-bold shadow-2xs' 
+              : 'text-[#777771] hover:text-[#1c1b1b]'
+          }`}
+        >
+          Dashboard
+        </Link>
+        <Link
+          to="/log"
+          className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+            location.pathname === '/log' || location.pathname === '/logging'
+              ? 'bg-[#c76c00] text-white font-bold shadow-2xs' 
+              : 'text-[#777771] hover:text-[#1c1b1b]'
+          }`}
+        >
+          <Scale className="w-3.5 h-3.5" />
+          <span>Scale &amp; Logging</span>
+        </Link>
+      </div>
+
       {/* Right Action Icons & District Selector */}
       <div className="flex items-center gap-2 sm:gap-3">
+        {/* Quick Link to Food Weight Logging Page */}
+        <Link
+          to={location.pathname === '/log' || location.pathname === '/logging' ? '/' : '/log'}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-space transition-all duration-200 select-none shadow-2xs cursor-pointer ${
+            location.pathname === '/log' || location.pathname === '/logging'
+              ? 'bg-[#c76c00] text-white border-[#c76c00] font-bold shadow-xs'
+              : 'bg-white text-[#1c1b1b] border-[#1c1b1b] hover:bg-neutral-100 font-medium'
+          }`}
+          title="Open Floor Scale Logging Terminal"
+        >
+          <Scale className="w-3.5 h-3.5" />
+          <span className="hidden sm:inline">
+            {location.pathname === '/log' || location.pathname === '/logging' ? 'Dashboard' : 'Log Food'}
+          </span>
+        </Link>
+
         {/* ML Model Connection Health Indicator */}
         <MlConnectionIndicator />
 

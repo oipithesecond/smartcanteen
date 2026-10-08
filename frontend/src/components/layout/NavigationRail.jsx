@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LayoutGrid, 
   UtensilsCrossed, 
@@ -16,6 +17,7 @@ import PersonaSwitcher from './PersonaSwitcher';
 
 const DOCK_ITEMS = [
   { id: 'dashboard', label: 'Executive KPIs', subtitle: "Today's Summary", icon: LayoutGrid },
+  { id: 'log-page', label: 'Weight Logging', subtitle: 'Floor Scale Terminal', icon: Scale, path: '/log', badge: 'scale' },
   { id: 'waste-split', label: 'Waste Breakdown', subtitle: 'By Food Category', icon: PieChart },
   { id: 'inventory', label: 'Inventory Stock', subtitle: 'Perishable Shelf Radar', icon: FileText, badge: 'alert' },
   { id: 'performance', label: 'Meal Performance', subtitle: 'Dish Waste Rankings', icon: UtensilsCrossed },
@@ -28,6 +30,8 @@ const DOCK_ITEMS = [
 ];
 
 export default function NavigationRail() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [activeNav, setActiveNav] = useState('dashboard');
   const { 
     currentUser, 
@@ -254,6 +258,20 @@ export default function NavigationRail() {
     setActiveNav(id);
     activeNavRef.current = id;
 
+    if (id === 'log-page') {
+      navigate('/log');
+      return;
+    }
+
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      }, 120);
+      return;
+    }
+
     const element = document.getElementById(id);
     if (!element) return;
 
@@ -305,7 +323,9 @@ export default function NavigationRail() {
       <div className="flex flex-col items-center gap-1.5">
         {visibleDockItems.map((item) => {
           const Icon = item.icon;
-          const isActive = activeNav === item.id;
+          const isActive = item.id === 'log-page' 
+            ? (location.pathname === '/log' || location.pathname === '/logging')
+            : (location.pathname === '/' && activeNav === item.id);
           return (
             <button
               key={item.id}
@@ -320,6 +340,9 @@ export default function NavigationRail() {
               <Icon className={`w-3.5 h-3.5 stroke-[2] shrink-0 ${isActive ? 'text-white' : 'text-slate-700 group-hover:text-slate-950'}`} />
 
               {/* Dynamic Status Badges on the icon */}
+              {item.badge === 'scale' && (
+                <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full ring-1 ring-white bg-[#c76c00]" />
+              )}
               {item.badge === 'ml' && (
                 <span 
                   className={`absolute top-0.5 right-0.5 w-1.5 h-1.5 rounded-full ring-1 ring-white ${

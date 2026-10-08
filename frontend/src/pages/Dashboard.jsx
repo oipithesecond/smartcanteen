@@ -18,12 +18,12 @@ export default function Dashboard() {
       {/* 1. Today's Executive Summary & 4 KPI Cards */}
       <ExecutiveKpiStrip />
 
-      {/* 2. Row 2: Asymmetrical 7:5 Grid (Donut 7 cols, Inventory at Risk 5 cols) */}
+      {/* 2. Row 2: Balanced 6:6 Grid (Food Scrap Radar & Inventory at Risk) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 min-w-0 items-stretch">
-        <div className="lg:col-span-7 min-w-0">
+        <div className="lg:col-span-6 min-w-0">
           <WasteDonutAndSplit />
         </div>
-        <div className="lg:col-span-5 min-w-0">
+        <div className="lg:col-span-6 min-w-0">
           <InventoryAtRisk />
         </div>
       </div>

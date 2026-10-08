@@ -7,6 +7,7 @@ import Header from './components/layout/Header';
 import MlAlertBanner from './components/layout/MlAlertBanner';
 import MlConnectModal from './components/layout/MlConnectModal';
 import Dashboard from './pages/Dashboard';
+import FoodLogging from './pages/FoodLogging';
 
 function App() {
   return (
@@ -35,6 +36,9 @@ function App() {
             {/* Main Dashboard Canvas - Responsive offset from left rail */}
             <main className="flex-1 w-full max-w-7xl mx-auto px-4 md:pl-24 md:pr-8 lg:pr-12 py-6 md:py-8 min-w-0 pb-16 md:pb-12">
               <Routes>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/log" element={<FoodLogging />} />
+                <Route path="/logging" element={<FoodLogging />} />
                 <Route path="*" element={<Dashboard />} />
               </Routes>
             </main>
