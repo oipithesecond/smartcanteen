@@ -181,81 +181,85 @@ export default function PlateVsPrepTelemetry() {
         )}
       </div>
 
-      {/* Service-by-Service Diverging Telemetry */}
-      <div className="space-y-4">
-        <div className="text-xs font-bold text-[#1c1b1b] uppercase tracking-wider font-space flex items-center justify-between">
-          <span>MEAL SERVICE BREAKDOWN</span>
-          <span className="text-[11px] font-normal text-[#777771] normal-case">
-            Black: Kitchen Prep • Amber: Plate Scraps
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {data.services.map((item) => (
-            <div 
-              key={item.service}
-              className="bg-[#fcfaf9] border border-[#e5e2e1] p-4 rounded-xl flex flex-col justify-between hover:bg-white hover:border-[#c8c7bf] transition-colors"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-space font-bold text-sm text-[#1c1b1b]">
-                    {item.service} Shift
-                  </span>
-                  <span className="text-xs font-mono font-medium text-[#777771]">
-                    {metricMode === 'kg' 
-                      ? `${item.prepKg + item.plateKg} kg wasted` 
-                      : metricMode === 'cost'
-                      ? `₹${Math.round((item.prepKg * 80) + (item.plateKg * 80)).toLocaleString()}`
-                      : `${item.prepPct}% / ${item.platePct}%`}
-                  </span>
-                </div>
-
-                <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex mb-2.5">
-                  <div 
-                    style={{ width: `${item.prepPct}%` }}
-                    className="h-full bg-[#1c1b1b]" 
-                  />
-                  <div 
-                    style={{ width: `${item.platePct}%` }}
-                    className="h-full bg-[#c76c00]" 
-                  />
-                </div>
-
-                <div className="flex items-center justify-between text-[11px] text-[#474741] font-space">
-                  <span>Prep: <strong>{item.prepKg} kg</strong> ({item.prepPct}%)</span>
-                  <span>Plate: <strong>{item.plateKg} kg</strong> ({item.platePct}%)</span>
-                </div>
-              </div>
-
-              <div className="mt-3 pt-2.5 border-t border-[#e5e2e1]/70 flex items-start gap-1.5 text-[11px] text-[#777771]">
-                <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#1c1b1b]" />
-                <span>{item.driver}</span>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Human-Made Tactile Element: Chef Note */}
-      <div 
-        className="mt-6 p-4 bg-[#fcfaf9] border border-[#e5e2e1] rounded-xl relative shadow-xs"
-      >
-        <div className="flex items-start gap-3">
-          <div className="flex-1">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-mono font-bold tracking-wider text-[#1c1b1b] uppercase">
-                Chef Observation Log
-              </span>
-              <span className="text-[11px] font-mono text-[#777771]">
-                Signed: <span className="font-serif italic font-bold text-[#1c1b1b]">{data.chefSigned}</span>
+      {/* Service-by-Service Diverging Telemetry (Nerd Mode) */}
+      {isNerdMode && (
+        <>
+          <div className="space-y-4">
+            <div className="text-xs font-bold text-[#1c1b1b] uppercase tracking-wider font-space flex items-center justify-between">
+              <span>MEAL SERVICE BREAKDOWN</span>
+              <span className="text-[11px] font-normal text-[#777771] normal-case">
+                Black: Kitchen Prep • Amber: Plate Scraps
               </span>
             </div>
-            <p className="text-xs text-[#474741] mt-1 font-serif italic leading-relaxed">
-              "{data.chefObservation}"
-            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.services.map((item) => (
+                <div 
+                  key={item.service}
+                  className="bg-[#fcfaf9] border border-[#e5e2e1] p-4 rounded-xl flex flex-col justify-between hover:bg-white hover:border-[#c8c7bf] transition-colors"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-space font-bold text-sm text-[#1c1b1b]">
+                        {item.service} Shift
+                      </span>
+                      <span className="text-xs font-mono font-medium text-[#777771]">
+                        {metricMode === 'kg' 
+                          ? `${item.prepKg + item.plateKg} kg wasted` 
+                          : metricMode === 'cost'
+                          ? `₹${Math.round((item.prepKg * 80) + (item.plateKg * 80)).toLocaleString()}`
+                          : `${item.prepPct}% / ${item.platePct}%`}
+                      </span>
+                    </div>
+
+                    <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex mb-2.5">
+                      <div 
+                        style={{ width: `${item.prepPct}%` }}
+                        className="h-full bg-[#1c1b1b]" 
+                      />
+                      <div 
+                        style={{ width: `${item.platePct}%` }}
+                        className="h-full bg-[#c76c00]" 
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between text-[11px] text-[#474741] font-space">
+                      <span>Prep: <strong>{item.prepKg} kg</strong> ({item.prepPct}%)</span>
+                      <span>Plate: <strong>{item.plateKg} kg</strong> ({item.platePct}%)</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-3 pt-2.5 border-t border-[#e5e2e1]/70 flex items-start gap-1.5 text-[11px] text-[#777771]">
+                    <Info className="w-3.5 h-3.5 shrink-0 mt-0.5 text-[#1c1b1b]" />
+                    <span>{item.driver}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-        </div>
-      </div>
+
+          {/* Human-Made Tactile Element: Chef Note */}
+          <div 
+            className="mt-6 p-4 bg-[#fcfaf9] border border-[#e5e2e1] rounded-xl relative shadow-xs"
+          >
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-bold tracking-wider text-[#1c1b1b] uppercase">
+                    Chef Observation Log
+                  </span>
+                  <span className="text-[11px] font-mono text-[#777771]">
+                    Signed: <span className="font-serif italic font-bold text-[#1c1b1b]">{data.chefSigned}</span>
+                  </span>
+                </div>
+                <p className="text-xs text-[#474741] mt-1 font-serif italic leading-relaxed">
+                  "{data.chefObservation}"
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </section>
   );
 }

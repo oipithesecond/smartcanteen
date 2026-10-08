@@ -100,10 +100,17 @@ export default function MealPerformanceAndDemand({ onOpenBatchPlan }) {
                       </span>
                     )}
                   </div>
-                  <span className="text-xs font-mono font-bold text-[#1c1b1b]">{meal.wasteRate} scrap</span>
+                  {isNerdMode ? (
+                    <span className="text-xs font-mono font-bold text-[#1c1b1b]">{meal.wasteRate} scrap</span>
+                  ) : (
+                    <div className="flex items-center gap-1 text-[11px] font-bold font-space" style={{ color: meal.barColor }}>
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: meal.barColor }} />
+                      <span>{meal.isGood ? 'POPULAR' : 'WATCH'}</span>
+                    </div>
+                  )}
                 </div>
 
-                <div className="w-full bg-[#f1edec] h-1.5 rounded-full overflow-hidden">
+                <div className="w-full bg-[#f1edec] h-2 rounded-full overflow-hidden">
                   <div 
                     className="h-full rounded-full transition-all duration-300"
                     style={{ 
@@ -113,9 +120,11 @@ export default function MealPerformanceAndDemand({ onOpenBatchPlan }) {
                   />
                 </div>
 
-                <div className="text-[11px] text-[#777771]">
-                  {meal.meta}
-                </div>
+                {isNerdMode && (
+                  <div className="text-[11px] text-[#777771]">
+                    {meal.meta}
+                  </div>
+                )}
               </div>
             ))}
           </div>

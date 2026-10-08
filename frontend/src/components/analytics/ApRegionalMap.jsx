@@ -7,6 +7,7 @@ import {
   YAxis, 
   CartesianGrid, 
   Tooltip, 
+  Legend,
   ResponsiveContainer 
 } from 'recharts';
 import { Compass, CheckCircle2 } from 'lucide-react';
@@ -183,28 +184,47 @@ export default function ApRegionalMap() {
             <span className="text-[10px] text-[#777771]">Normalized kg</span>
           </div>
 
-          <div className="w-full h-[220px] min-w-0">
+          <div className="w-full h-[280px] min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={TASTE_SHOWDOWN_DATA} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="2 2" vertical={false} stroke="#e5e2e1" />
-                <XAxis dataKey="district" tick={{ fontSize: 11, fill: '#1c1b1b', fontFamily: 'Space Grotesk' }} />
-                <YAxis tick={{ fontSize: 10, fill: '#777771' }} />
-                <Tooltip 
-                  cursor={{ fill: 'rgba(80, 99, 84, 0.06)', radius: 4 }}
-                  contentStyle={{ 
-                    backgroundColor: '#ffffff', 
-                    borderRadius: '8px', 
-                    border: '1px solid #e2e8f0', 
-                    color: '#0f172a', 
-                    fontSize: '11px', 
+              <BarChart
+                layout="vertical"
+                data={TASTE_SHOWDOWN_DATA}
+                margin={{ top: 4, right: 16, left: 8, bottom: 4 }}
+              >
+                <CartesianGrid strokeDasharray="2 2" horizontal={false} stroke="#e5e2e1" />
+                <XAxis
+                  type="number"
+                  tick={{ fontSize: 10, fill: '#777771', fontFamily: 'Space Grotesk' }}
+                  axisLine={false}
+                  tickLine={false}
+                  unit=" kg"
+                />
+                <YAxis
+                  type="category"
+                  dataKey="dish"
+                  width={120}
+                  tick={{ fontSize: 10, fill: '#1c1b1b', fontFamily: 'Space Grotesk' }}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip
+                  cursor={{ fill: 'rgba(28, 27, 27, 0.04)' }}
+                  contentStyle={{
+                    backgroundColor: '#ffffff',
+                    borderRadius: '8px',
+                    border: '1px solid #e2e8f0',
+                    color: '#0f172a',
+                    fontSize: '11px',
                     fontFamily: 'Space Grotesk',
                     boxShadow: '0 10px 25px -5px rgba(15, 23, 42, 0.12)'
                   }}
                   itemStyle={{ color: '#334155' }}
                   labelStyle={{ fontWeight: 700, color: '#0f172a', marginBottom: '2px' }}
                 />
-                <Bar dataKey="consumedKg" fill="#1c1b1b" name="Consumed (kg)" radius={[3, 3, 0, 0]} />
-                <Bar dataKey="wastedKg" fill="#c76c00" name="Wasted (kg)" radius={[3, 3, 0, 0]} />
+                <Legend wrapperStyle={{ fontSize: '11px', fontFamily: 'Space Grotesk', paddingTop: '6px' }} />
+                <Bar dataKey="amaravati" fill="#1c1b1b" name="Amaravati" radius={[0, 3, 3, 0]} barSize={7} />
+                <Bar dataKey="guntur" fill="#c76c00" name="Guntur" radius={[0, 3, 3, 0]} barSize={7} />
+                <Bar dataKey="vijayawada" fill="#6e6e6e" name="Vijayawada" radius={[0, 3, 3, 0]} barSize={7} />
               </BarChart>
             </ResponsiveContainer>
           </div>
