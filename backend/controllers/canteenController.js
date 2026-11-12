@@ -408,3 +408,105 @@ exports.getOpenLogs = async (req, res) => {
         res.status(500).json({ error: "Failed to fetch open logs", details: error.message });
     }
 };
+
+
+// In-memory cache for latest IoT scale telemetry
+let latestScaleReading = null;
+
+exports.logScaleReading = async (req, res) => {
+    try {
+        const { district, itemName, grossWeightKg, tareWeightKg = 0, logId } = req.body;
+        const gross = parseFloat(grossWeightKg) || 0;
+        const tare = parseFloat(tareWeightKg) || 0;
+        const netWeightKg = Math.max(0, parseFloat((gross - tare).toFixed(2)));
+
+        if (netWeightKg <= 0) {
+            return res.status(400).json({ error: 'Net weight must be greater than zero.' });
+        }
+
+        const now = new Date();
+        const defaultPortionKg = 0.35;
+        const defaultPortions = Math.round(netWeightKg / defaultPortionKg);
+
+        latestScaleReading = {
+            district: district || 'guntur',
+            itemName: itemName || 'General Waste',
+            grossWeightKg: gross,
+            tareWeightKg: tare,
+            netWeightKg,
+            portionsEquivalent: defaultPortions,
+            timestamp: now.toISOString()
+        };
+
+        if (mongoose.connection.readyState !== 1) {
+            return res.status(200).json({
+                message: 'Scale reading captured (offline/local mode).',
+                data: latestScaleReading
+            });
+        }
+
+        // Try to match an open log in MongoDB
+        let log = null;
+        if (logId) {
+            log = await DailyLog.findById(logId);
+        } else if (district && itemName) {
+            log = await DailyLog.findOne({
+                district: district.toLowerCase(),
+                itemName: new RegExp('^' + itemName + '$', 'i'),
+                isClosed: false
+            }).sort({ date: -1 });
+        } else if (district) {
+            log = await DailyLog.findOne({
+                district: district.toLowerCase(),
+                isClosed: false
+            }).sort({ date: -1 });
+        }
+
+        if (log) {
+            const dishPortionKg = log.portionWeightKg || 0.35;
+            const leftoverPortions = Math.round(netWeightKg / dishPortionKg);
+            const prepared = log.actuals?.actualPreparedPortions || log.prediction?.optimalCookPortions || (leftoverPortions + 50);
+            const consumed = Math.max(0, prepared - leftoverPortions);
+            const costPerPortion = log.financials?.costPerPortion || 40;
+
+            log.actuals = {
+                actualPreparedPortions: prepared,
+                leftoverPortions: leftoverPortions,
+                consumedPortions: consumed,
+                wasteKg: netWeightKg,
+                stockoutFlag: leftoverPortions === 0 && prepared <= (log.prediction?.baselineDemand || 0)
+            };
+
+            if (log.financials) {
+                log.financials.costOfWaste = leftoverPortions * costPerPortion;
+            }
+
+            log.isClosed = true;
+            await log.save();
+
+            return res.status(200).json({
+                message: 'Successfully logged ' + netWeightKg + ' kg for ' + log.itemName + '. DailyLog closed.',
+                data: {
+                    logId: log._id,
+                    itemName: log.itemName,
+                    district: log.district,
+                    netWeightKg,
+                    portionsEquivalent: leftoverPortions,
+                    costLost: log.financials?.costOfWaste
+                }
+            });
+        }
+
+        return res.status(200).json({
+            message: 'Scale weight logged successfully (no matching open DailyLog found to close).',
+            data: latestScaleReading
+        });
+    } catch (error) {
+        console.error('Error in logScaleReading:', error.message);
+        res.status(500).json({ error: 'Failed to process scale reading', details: error.message });
+    }
+};
+
+exports.getLatestScaleReading = (req, res) => {
+    res.status(200).json(latestScaleReading || { status: 'No scale reading received yet' });
+};

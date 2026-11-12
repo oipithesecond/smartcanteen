@@ -7,7 +7,9 @@ const {
     getBatchCookPlan, 
     logLeftovers, 
     getAnalytics, 
-    getOpenLogs 
+    getOpenLogs,
+    logScaleReading,
+    getLatestScaleReading
 } = require('./controllers/canteenController');
 const macroController = require('./controllers/macroController');
 
@@ -36,6 +38,10 @@ app.post('/api/batch-plan', getBatchCookPlan);
 app.put('/api/log-leftovers', logLeftovers);
 app.get('/api/analytics', getAnalytics);
 app.get('/api/open-logs', getOpenLogs);
+
+// IoT Weight Scale Routes (Raspberry Pi)
+app.post('/api/scale/log-weight', logScaleReading);
+app.get('/api/scale/latest', getLatestScaleReading);
 
 // Real-time ML Health Check Route
 app.get('/api/ml-health', async (req, res) => {
