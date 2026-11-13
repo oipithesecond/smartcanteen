@@ -153,6 +153,87 @@ export default function FoodLogging() {
     }
   }, [logs]);
 
+  // Live Raspberry Pi IoT Scale Telemetry State
+  const [scaleTelemetry, setScaleTelemetry] = useState(null);
+  const [isScaleOnline, setIsScaleOnline] = useState(false);
+  const [lastSyncedTime, setLastSyncedTime] = useState(null);
+  const [isSyncingScale, setIsSyncingScale] = useState(false);
+
+  // Poll IoT Scale endpoint every 2 seconds
+  const syncLatestScale = async (manual = false) => {
+    try {
+      setIsSyncingScale(true);
+      const res = await axios.get(`${API_BASE}/scale/latest`);
+      if (res.data && res.data.grossWeightKg !== undefined) {
+        setScaleTelemetry(res.data);
+        setIsScaleOnline(true);
+
+        const isNewReading = res.data.timestamp && res.data.timestamp !== lastSyncedTime;
+        if (isNewReading || manual) {
+          if (res.data.timestamp) setLastSyncedTime(res.data.timestamp);
+
+          const grossNum = Number(res.data.grossWeightKg);
+          setGrossWeight(grossNum.toFixed(2));
+          if (res.data.tareWeightKg !== undefined) {
+            setTarePreset(Number(res.data.tareWeightKg).toFixed(2));
+          }
+          if (res.data.district && FLOOR_EXECUTIVES[res.data.district]) {
+            setSelectedDistrict(res.data.district);
+          }
+          if (res.data.itemName && res.data.itemName !== 'General Waste') {
+            setItemName(res.data.itemName);
+          }
+
+          // Automatically record into the visual logs ledger
+          const netMass = res.data.netWeightKg || grossNum;
+          const portions = res.data.portionsEquivalent || Math.round(netMass / 0.35);
+          const computedLoss = Math.round(netMass * (parseFloat(costPerKg) || 120));
+
+          const scaleEntry = {
+            id: 'scale-iot-' + Date.now().toString().slice(-5),
+            timestamp: new Date(res.data.timestamp || Date.now()).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' Today',
+            itemName: (res.data.itemName && res.data.itemName !== 'General Waste') ? res.data.itemName : itemName,
+            category: category || 'Staples',
+            mealSlot: mealSlot || 'lunch',
+            scrapType: 'Live IoT Scale Stream (HX711)',
+            grossWeightKg: grossNum,
+            tareWeightKg: res.data.tareWeightKg || 0,
+            netWeightKg: netMass,
+            portionsEquivalent: portions,
+            costLost: computedLoss,
+            district: res.data.district || selectedDistrict,
+            loggedBy: 'Raspberry Pi IoT Scale',
+            executiveTitle: 'Automated IoT Sensor Telemetry',
+            signatureHash: 'IOT-' + (res.data.district || 'GNT').slice(0, 3).toUpperCase() + '-' + Math.floor(1000 + Math.random() * 9000)
+          };
+
+          setLogs(prev => {
+            const alreadyExists = prev.some(l => l.id.startsWith('scale-iot-') && Math.abs(l.grossWeightKg - grossNum) < 0.001);
+            return alreadyExists ? prev : [scaleEntry, ...prev];
+          });
+
+          if (manual || isNewReading) {
+            const timeStr = new Date(res.data.timestamp || Date.now()).toLocaleTimeString();
+            setSuccessMessage('📡 Raspberry Pi Scale synced: ' + grossNum + ' kg at ' + timeStr);
+            setTimeout(() => setSuccessMessage(null), 5000);
+          }
+        }
+      }
+    } catch {
+      setIsScaleOnline(false);
+    } finally {
+      setIsSyncingScale(false);
+    }
+  };
+
+  useEffect(() => {
+    syncLatestScale(false);
+    const interval = setInterval(() => {
+      syncLatestScale(false);
+    }, 2000);
+    return () => clearInterval(interval);
+  }, [lastSyncedTime, itemName, category, mealSlot, costPerKg, selectedDistrict]);
+
   // Net weight calculated live
   const netWeightKg = useMemo(() => {
     const gross = parseFloat(grossWeight) || 0;
@@ -628,9 +709,17 @@ export default function FoodLogging() {
             <div className="flex items-center justify-between text-xs text-neutral-400 font-mono pb-3 border-b border-white/10 mb-4">
               <span className="flex items-center gap-1.5 text-emerald-400">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-                ONLINE • SCALE #01
+                {isScaleOnline ? 'RASPBERRY PI SCALE • LIVE' : 'OFFLINE SCALE #01'}
               </span>
-              <span>TARE: {tarePreset} kg</span>
+              <button
+                type="button"
+                onClick={() => syncLatestScale(true)}
+                title="Force sync from Raspberry Pi scale"
+                className="px-2 py-0.5 bg-white/10 hover:bg-white/20 text-white rounded text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
+              >
+                <RotateCcw className={`w-3 h-3 ${isSyncingScale ? 'animate-spin' : ''}`} />
+                <span>Sync Scale</span>
+              </button>
             </div>
 
             {/* Glowing Big Digital Mass Readout */}
@@ -645,6 +734,12 @@ export default function FoodLogging() {
               <div className="text-xs text-neutral-400 font-mono">
                 Gross: {grossWeight} kg • Pan Deduction: -{tarePreset} kg
               </div>
+              {scaleTelemetry?.timestamp && (
+                <div className="text-[10px] text-emerald-300 font-mono mt-2 inline-flex items-center gap-1.5 bg-emerald-950/60 py-0.5 px-2.5 rounded-full border border-emerald-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>Last Pi Stream: {new Date(scaleTelemetry.timestamp).toLocaleTimeString()} ({scaleTelemetry.district?.toUpperCase()})</span>
+                </div>
+              )}
             </div>
 
             {/* Quick Metrics Bar */}
