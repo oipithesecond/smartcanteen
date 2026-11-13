@@ -65,10 +65,8 @@ export const DISTRICT_METADATA = {
       precipitationMm: 1.2,
       condition: 'Partly Sunny',
       alert: false,
-      bannerText: '🏛️ AP Legislative Assembly in Session (+22% visitor volume anticipated)'
-    },
-    dominantDish: 'Pesarattu Upma & Mudda Pappu'
-  },
+      bannerText: 'AP Legislative Assembly in Session (+22% visitor volume anticipated)'},
+    dominantDish: 'Pesarattu Upma & Mudda Pappu'},
   guntur: {
     id: 'guntur',
     name: 'Guntur',
@@ -93,10 +91,8 @@ export const DISTRICT_METADATA = {
       precipitationMm: 14.8,
       condition: 'Thunderstorm Warning',
       alert: true,
-      bannerText: '🌧️ Monsoon Heavy Rain Alert Active (+15% indoor tiffin & comfort food shift)'
-    },
-    dominantDish: 'Guntur Karam Dosa & Gongura Rice'
-  },
+      bannerText: 'Monsoon Heavy Rain Alert Active (+15% indoor tiffin & comfort food shift)'},
+    dominantDish: 'Guntur Karam Dosa & Gongura Rice'},
   vijayawada: {
     id: 'vijayawada',
     name: 'Vijayawada',
@@ -115,16 +111,14 @@ export const DISTRICT_METADATA = {
     estimatedCostSaved: 10800,
     estimatedCo2AvoidedTons: 0.32,
     headline: 'Waste is elevated (+1.4%) in Vijayawada Transit Hub.',
-    subtext: 'Train delay passenger surges caused evening overpreparation. Adjusting safety buffers recommended.',
+    subtext: 'Sudden passenger surges from delayed trains led to evening overcooking. We recommend lowering the safety buffer.',
     currentWeather: {
       tempMaxC: 31.8,
       precipitationMm: 0.0,
       condition: 'Clear Sky',
       alert: false,
-      bannerText: '🚆 Railway Junction Peak Transit Hours (Shift volatility +18%)'
-    },
-    dominantDish: 'Vijayawada Chicken Biryani & Poori Korma'
-  }
+      bannerText: 'Railway Junction Peak Transit Hours (Shift volatility +18%)'},
+    dominantDish: 'Vijayawada Chicken Biryani & Poori Korma'}
 };
 
 /**
@@ -160,10 +154,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 35,
       shortagePenalty: 80,
       forecastedDemand: 345,
-      shifterReason: '🏛️ Assembly Session (+15%)',
+      shifterReason: 'Assembly Session (+15%)',
       shifterBadgeColor: 'blue',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-2',
       itemName: 'Masala Dosa',
@@ -191,10 +184,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 40,
       shortagePenalty: 75,
       forecastedDemand: 430,
-      shifterReason: '⚡ High Morning Traffic (+10%)',
+      shifterReason: 'High Morning Traffic (+10%)',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-3',
       itemName: 'Rava Upma with Chutney',
@@ -224,8 +216,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 210,
       shifterReason: 'Regular Morning Flow',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-4',
       itemName: 'Mudda Pappu & Avakai Rice',
@@ -253,10 +244,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 45,
       shortagePenalty: 90,
       forecastedDemand: 525,
-      shifterReason: '🏛️ Secretariat VIP Lunch (+18%)',
+      shifterReason: 'Secretariat VIP Lunch (+18%)',
       shifterBadgeColor: 'blue',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'am-5',
       itemName: 'Andhra Veg Meals (Thali)',
@@ -286,8 +276,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 635,
       shifterReason: 'High Lunch Crowd (+8%)',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-6',
       itemName: 'Dibba Rotti with Chutney',
@@ -317,8 +306,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 185,
       shifterReason: 'Evening Tea Traffic',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-7',
       itemName: 'Curd Rice with Pomegranate',
@@ -348,8 +336,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 320,
       shifterReason: 'Stable Dinner Finisher',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-8',
       itemName: 'Paneer Butter Masala with Pulka',
@@ -379,8 +366,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 295,
       shifterReason: 'Dinner Special',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'am-9',
       itemName: 'Chicken Dum Biryani (Off-Menu)',
@@ -408,10 +394,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 75,
       shortagePenalty: 120,
       forecastedDemand: 0,
-      shifterReason: '🥦 Tuesday Meatless Day (0 Cook Target)',
+      shifterReason: 'Tuesday Meatless Day (0 Cook Target)',
       shifterBadgeColor: 'amber',
-      status: 'Inactive'
-    }
+      status: 'Inactive'}
   ],
   guntur: [
     {
@@ -441,10 +426,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 28,
       shortagePenalty: 65,
       forecastedDemand: 460,
-      shifterReason: '🌧️ Heavy Rain Alert (+12%)',
+      shifterReason: 'Heavy Rain Alert (+12%)',
       shifterBadgeColor: 'blue',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'gn-2',
       itemName: 'Guntur Karam Dosa',
@@ -472,10 +456,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 38,
       shortagePenalty: 85,
       forecastedDemand: 410,
-      shifterReason: '🌧️ Spicy Comfort Food Surge (+18%)',
+      shifterReason: 'Spicy Comfort Food Surge (+18%)',
       shifterBadgeColor: 'amber',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'gn-3',
       itemName: 'Gongura Rice with Onion Raita',
@@ -503,10 +486,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 42,
       shortagePenalty: 95,
       forecastedDemand: 495,
-      shifterReason: '🌶️ Regional Favorite (+15%)',
+      shifterReason: 'Regional Favorite (+15%)',
       shifterBadgeColor: 'emerald',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'gn-4',
       itemName: 'Andhra Spicy Chicken Curry',
@@ -536,8 +518,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 420,
       shifterReason: 'Non-Veg Peak Lunch',
       shifterBadgeColor: 'slate',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'gn-5',
       itemName: 'Tomato Pappu with Ghee & Rice',
@@ -567,8 +548,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 365,
       shifterReason: 'Stable Staples Core',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'gn-6',
       itemName: 'Guntur Mirchi Bajji (3 pcs)',
@@ -596,10 +576,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 22,
       shortagePenalty: 45,
       forecastedDemand: 310,
-      shifterReason: '🌧️ Monsoon Rain Surge (+25%)',
+      shifterReason: 'Monsoon Rain Surge (+25%)',
       shifterBadgeColor: 'amber',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'gn-7',
       itemName: 'Guntur Punugulu with Chutney',
@@ -629,8 +608,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 235,
       shifterReason: 'Batter Re-purposing Active',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'gn-8',
       itemName: 'Pulka with Mixed Veg Kurma',
@@ -660,8 +638,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 315,
       shifterReason: 'Light Dinner Option',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'gn-9',
       itemName: 'Natukodi Pulusu (Off-Menu)',
@@ -691,8 +668,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 0,
       shifterReason: 'Weekend Special Only',
       shifterBadgeColor: 'slate',
-      status: 'Inactive'
-    }
+      status: 'Inactive'}
   ],
   vijayawada: [
     {
@@ -724,8 +700,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 390,
       shifterReason: 'Transit Quick Breakfast',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'vja-2',
       itemName: 'Poori with Potato Korma (3 pcs)',
@@ -753,10 +728,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 36,
       shortagePenalty: 80,
       forecastedDemand: 540,
-      shifterReason: '🚆 Train Arrivals Surge (+15%)',
+      shifterReason: 'Train Arrivals Surge (+15%)',
       shifterBadgeColor: 'amber',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'vja-3',
       itemName: 'Vijayawada Special Chicken Biryani',
@@ -784,10 +758,9 @@ export const MENU_ITEMS_BY_DISTRICT = {
       costPerPortion: 82,
       shortagePenalty: 140,
       forecastedDemand: 740,
-      shifterReason: '🔥 Peak Transit Demand (+20%)',
+      shifterReason: 'Peak Transit Demand (+20%)',
       shifterBadgeColor: 'amber',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'vja-4',
       itemName: 'Veg Dum Biryani with Mirchi ka Salan',
@@ -817,8 +790,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 450,
       shifterReason: 'Stable Lunch Veggie Core',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'vja-5',
       itemName: 'Masala Fish Fry',
@@ -848,8 +820,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 215,
       shifterReason: 'Perishable Fish Fresh Catch',
       shifterBadgeColor: 'slate',
-      status: 'Volatile'
-    },
+      status: 'Volatile'},
     {
       id: 'vja-6',
       itemName: 'Masala Vada with Coconut Chutney',
@@ -879,8 +850,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 345,
       shifterReason: 'Evening Commuter Flow',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'vja-7',
       itemName: 'Egg Bhurji with Parotta',
@@ -910,8 +880,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 295,
       shifterReason: 'Night Traveler Favorite',
       shifterBadgeColor: 'emerald',
-      status: 'Stable'
-    },
+      status: 'Stable'},
     {
       id: 'vja-8',
       itemName: 'Bagara Rice with Dalcha',
@@ -941,8 +910,7 @@ export const MENU_ITEMS_BY_DISTRICT = {
       forecastedDemand: 310,
       shifterReason: 'Dinner Rice Core',
       shifterBadgeColor: 'slate',
-      status: 'Stable'
-    }
+      status: 'Stable'}
   ]
 };
 
@@ -950,11 +918,11 @@ export const MENU_ITEMS_BY_DISTRICT = {
  * Waste breakdown by category (Where is food being wasted?)
  */
 export const CATEGORY_WASTE_DATA = [
-  { category: 'Rice & Biryani Grains', percentage: 42, kg: 74.8, cost: 5980, color: '#10B981' },
-  { category: 'Veg Curries & Kurma', percentage: 24, kg: 42.7, cost: 4270, color: '#F59E0B' },
-  { category: 'Dal, Sambar & Pappu', percentage: 17, kg: 30.3, cost: 1818, color: '#3B82F6' },
-  { category: 'Chapati & Breads', percentage: 11, kg: 19.6, cost: 1176, color: '#EC4899' },
-  { category: 'Snacks & Chutneys', percentage: 6, kg: 10.6, cost: 996, color: '#8B5CF6' }
+  { category: 'Rice & Biryani Grains', percentage: 42, kg: 74.8, cost: 5980, color: '#10B981'},
+  { category: 'Veg Curries & Kurma', percentage: 24, kg: 42.7, cost: 4270, color: '#F59E0B'},
+  { category: 'Dal, Sambar & Pappu', percentage: 17, kg: 30.3, cost: 1818, color: '#3B82F6'},
+  { category: 'Chapati & Breads', percentage: 11, kg: 19.6, cost: 1176, color: '#EC4899'},
+  { category: 'Snacks & Chutneys', percentage: 6, kg: 10.6, cost: 996, color: '#8B5CF6'}
 ];
 
 /**
@@ -997,8 +965,7 @@ export const INVENTORY_AT_RISK = [
     expiryHours: 18,
     urgencyLevel: 'HIGH_RISK',
     actionText: 'Prep batch of Tomato Pappu & Sambar base immediately',
-    icon: '🍅'
-  },
+    icon: ''},
   {
     id: 'inv-2',
     item: 'Fermented Idli Batter',
@@ -1007,8 +974,7 @@ export const INVENTORY_AT_RISK = [
     expiryHours: 8,
     urgencyLevel: 'CRITICAL',
     actionText: 'Re-purpose into Evening Punugulu & Onion Dosa',
-    icon: '🥣'
-  },
+    icon: ''},
   {
     id: 'inv-3',
     item: 'Fresh Gongura Leaves',
@@ -1017,8 +983,7 @@ export const INVENTORY_AT_RISK = [
     expiryHours: 24,
     urgencyLevel: 'MODERATE_RISK',
     actionText: 'Cook into Gongura Pachadi preserve for extended life',
-    icon: '🌿'
-  },
+    icon: ''},
   {
     id: 'inv-4',
     item: 'Fresh Malai Paneer',
@@ -1027,8 +992,7 @@ export const INVENTORY_AT_RISK = [
     expiryHours: 10,
     urgencyLevel: 'HIGH_RISK',
     actionText: 'Prioritize Paneer Kurma for Dinner slot',
-    icon: '🧀'
-  },
+    icon: ''},
   {
     id: 'inv-5',
     item: 'Dry Toor Dal & Potatoes',
@@ -1037,8 +1001,7 @@ export const INVENTORY_AT_RISK = [
     expiryHours: 168,
     urgencyLevel: 'STABLE_OVERSTOCKED',
     actionText: 'Overstocked: Pause supplier delivery for next 48 hrs',
-    icon: '🥔'
-  }
+    icon: ''}
 ];
 
 /**
@@ -1092,8 +1055,7 @@ export function getAugmentedBatchCookPlan(districtId, bufferMultiplier = 1.0) {
         optimalCookPortions: 0,
         optimalCookKg: 0,
         batchesRequired: 0,
-        batchDisplay: '0 batches (Off-Menu)'
-      };
+        batchDisplay: '0 batches (Off-Menu)'};
     }
 
     const { criticalRatio, zScore, bufferPortions } = calculateNewsvendorBuffer(
@@ -1132,8 +1094,7 @@ export const USERS = [
     assignedDistrict: 'amaravati',
     department: 'AP State Canteen Authority - Amaravati Secretariat',
     badge: 'Statewide Admin',
-    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'admin-ananya',
     name: 'Dr. Ananya Sharma',
@@ -1143,8 +1104,7 @@ export const USERS = [
     assignedDistrict: 'amaravati',
     department: 'State Green Protocol & Waste Mitigation Cell',
     badge: 'Statewide Admin',
-    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'admin-rajesh',
     name: 'Rajesh Varma',
@@ -1154,8 +1114,7 @@ export const USERS = [
     assignedDistrict: 'vijayawada',
     department: 'Krishna-Guntur Food Logistics Network',
     badge: 'Statewide Admin',
-    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&auto=format&fit=crop&q=80'},
 
   // --- KITCHEN USER / MANAGER PROFILES (District Locked) ---
   {
@@ -1167,8 +1126,7 @@ export const USERS = [
     assignedDistrict: 'guntur',
     department: 'Guntur Central Canteen Kitchen Floor',
     badge: 'Guntur Floor',
-    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'mgr-lakshmi',
     name: 'Lakshmi Priya',
@@ -1178,8 +1136,7 @@ export const USERS = [
     assignedDistrict: 'amaravati',
     department: 'Secretariat & High Court Dining Complex',
     badge: 'Amaravati Floor',
-    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'mgr-venkatesh',
     name: 'K. Venkatesh',
@@ -1189,8 +1146,7 @@ export const USERS = [
     assignedDistrict: 'vijayawada',
     department: 'Vijayawada Multi-Modal Kitchen Hub',
     badge: 'Vijayawada Floor',
-    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'user-pooja',
     name: 'Pooja Sundaram',
@@ -1200,8 +1156,7 @@ export const USERS = [
     assignedDistrict: 'guntur',
     department: 'Guntur Agricultural University Dining Unit',
     badge: 'Guntur Staff',
-    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80'
-  },
+    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&auto=format&fit=crop&q=80'},
   {
     id: 'user-manoj',
     name: 'Manoj Kumar',
@@ -1211,8 +1166,7 @@ export const USERS = [
     assignedDistrict: 'vijayawada',
     department: 'Vijayawada Central Perishable Store',
     badge: 'Vijayawada Staff',
-    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80'
-  }
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?w=150&auto=format&fit=crop&q=80'}
 ];
 
 /**
@@ -1226,15 +1180,14 @@ export const PLATE_VS_PREP_DATA = {
     prepWasteCost: 8320,
     plateWasteCost: 5920,
     services: [
-      { service: 'Breakfast', prepKg: 18, plateKg: 10, prepPct: 64, platePct: 36, driver: 'Excess Idli batter steamed too early' },
-      { service: 'Lunch', prepKg: 46, plateKg: 29, prepPct: 61, platePct: 39, driver: 'Sambar & Gongura rice overproduction' },
-      { service: 'Snacks', prepKg: 8, plateKg: 11, prepPct: 42, platePct: 58, driver: 'Chutney portion cups left unconsumed' },
-      { service: 'Dinner', prepKg: 32, plateKg: 24, prepPct: 57, platePct: 43, driver: 'Late walk-ins drop off after 21:00' },
+      { service: 'Breakfast', prepKg: 18, plateKg: 10, prepPct: 64, platePct: 36, driver: 'Excess Idli batter steamed too early'},
+      { service: 'Lunch', prepKg: 46, plateKg: 29, prepPct: 61, platePct: 39, driver: 'Sambar & Gongura rice overproduction'},
+      { service: 'Snacks', prepKg: 8, plateKg: 11, prepPct: 42, platePct: 58, driver: 'Chutney portion cups left unconsumed'},
+      { service: 'Dinner', prepKg: 32, plateKg: 24, prepPct: 57, platePct: 43, driver: 'Late walk-ins drop off after 21:00'},
     ],
     chefObservation: 'Rice over-portioning on 1st helping drives 68% of lunch plate scrapings. Recommending dual-scoop policy.',
     chefSigned: 'Suresh R.',
-    station: 'Guntur Central Station #2'
-  },
+    station: 'Guntur Central Station #2'},
   amaravati: {
     totalWasteKg: 111,
     prepWasteKg: 52,
@@ -1242,15 +1195,14 @@ export const PLATE_VS_PREP_DATA = {
     prepWasteCost: 4420,
     plateWasteCost: 5015,
     services: [
-      { service: 'Breakfast', prepKg: 11, plateKg: 14, prepPct: 44, platePct: 56, driver: 'Pesarattu upma heavy portions' },
-      { service: 'Lunch', prepKg: 24, plateKg: 34, prepPct: 41, platePct: 59, driver: 'Secretariat thali fixed side dishes untouched' },
-      { service: 'Snacks', prepKg: 6, plateKg: 4, prepPct: 60, platePct: 40, driver: 'Dibba rotti pan batch excess' },
-      { service: 'Dinner', prepKg: 11, plateKg: 7, prepPct: 61, platePct: 39, driver: 'Predictable dinner flow from resident staff' },
+      { service: 'Breakfast', prepKg: 11, plateKg: 14, prepPct: 44, platePct: 56, driver: 'Pesarattu upma heavy portions'},
+      { service: 'Lunch', prepKg: 24, plateKg: 34, prepPct: 41, platePct: 59, driver: 'Secretariat thali fixed side dishes untouched'},
+      { service: 'Snacks', prepKg: 6, plateKg: 4, prepPct: 60, platePct: 40, driver: 'Dibba rotti pan batch excess'},
+      { service: 'Dinner', prepKg: 11, plateKg: 7, prepPct: 61, platePct: 39, driver: 'Predictable dinner flow from resident staff'},
     ],
     chefObservation: 'Executive lunch thalis contain 5 fixed cups; bitter gourd & radish sides generate 40kg plate waste.',
     chefSigned: 'Lakshmi P.',
-    station: 'Amaravati Complex Station #1'
-  },
+    station: 'Amaravati Complex Station #1'},
   vijayawada: {
     totalWasteKg: 434,
     prepWasteKg: 282,
@@ -1258,15 +1210,14 @@ export const PLATE_VS_PREP_DATA = {
     prepWasteCost: 22560,
     plateWasteCost: 12160,
     services: [
-      { service: 'Breakfast', prepKg: 42, plateKg: 26, prepPct: 62, platePct: 38, driver: 'Train arrival delay caused morning idle hot trays' },
-      { service: 'Lunch', prepKg: 118, plateKg: 57, prepPct: 67, platePct: 33, driver: 'Biryani batch size too large for late afternoon' },
-      { service: 'Snacks', prepKg: 24, plateKg: 18, prepPct: 57, platePct: 43, driver: 'Deep fried vadas past holding temperature' },
-      { service: 'Dinner', prepKg: 98, plateKg: 51, prepPct: 66, platePct: 34, driver: 'Cancelled night express trains stranded 120kg meals' },
+      { service: 'Breakfast', prepKg: 42, plateKg: 26, prepPct: 62, platePct: 38, driver: 'Train arrival delay caused morning idle hot trays'},
+      { service: 'Lunch', prepKg: 118, plateKg: 57, prepPct: 67, platePct: 33, driver: 'Biryani batch size too large for late afternoon'},
+      { service: 'Snacks', prepKg: 24, plateKg: 18, prepPct: 57, platePct: 43, driver: 'Deep fried vadas past holding temperature'},
+      { service: 'Dinner', prepKg: 98, plateKg: 51, prepPct: 66, platePct: 34, driver: 'Cancelled night express trains stranded 120kg meals'},
     ],
     chefObservation: 'Unannounced railway schedule changes cause mass cauldron waste. Integrating IRCTC arrival webhook planned.',
     chefSigned: 'K. Venkatesh',
-    station: 'Vijayawada Junction Bay #5'
-  }
+    station: 'Vijayawada Junction Bay #5'}
 };
 
 /**
@@ -1274,34 +1225,34 @@ export const PLATE_VS_PREP_DATA = {
  */
 export const FORECAST_HORIZON_DATA = {
   guntur: [
-    { day: 'Thu', date: 'Sep 18', actual: 2340, predicted: 2310, optimalBuffer: 2390, weather: '☀️ Clear', accuracy: 98.7, status: 'Matched' },
-    { day: 'Fri', date: 'Sep 19', actual: 2490, predicted: 2460, optimalBuffer: 2545, weather: '☀️ Clear', accuracy: 98.8, status: 'Matched' },
-    { day: 'Sat', date: 'Sep 20', actual: 2150, predicted: 2180, optimalBuffer: 2260, weather: '⛅ Overcast', accuracy: 98.6, status: 'Matched' },
-    { day: 'Sun', date: 'Sep 21', actual: 2680, predicted: 2610, optimalBuffer: 2710, weather: '🌧️ Rain Surge', accuracy: 97.4, status: 'Buffer Protected' },
-    { day: 'Mon', date: 'Sep 22', actual: 2410, predicted: 2430, optimalBuffer: 2515, weather: '☀️ Clear', accuracy: 99.2, status: 'Matched' },
-    { day: 'Tue', date: 'Sep 23', actual: 2290, predicted: 2270, optimalBuffer: 2355, weather: '🥦 Meatless', accuracy: 99.1, status: 'Matched' },
-    { day: 'Wed', date: 'Today', actual: 2486, predicted: 2450, optimalBuffer: 2540, weather: '⛈️ Storm Alert', accuracy: 98.5, status: 'Matched' },
-    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2520, optimalBuffer: 2615, weather: '🌤️ 32.6°C', accuracy: null, status: 'XGBoost Inferred' }
+    { day: 'Thu', date: 'Sep 18', actual: 2340, predicted: 2310, optimalBuffer: 2390, weather: 'Clear', accuracy: 98.7, status: 'Matched'},
+    { day: 'Fri', date: 'Sep 19', actual: 2490, predicted: 2460, optimalBuffer: 2545, weather: 'Clear', accuracy: 98.8, status: 'Matched'},
+    { day: 'Sat', date: 'Sep 20', actual: 2150, predicted: 2180, optimalBuffer: 2260, weather: 'Overcast', accuracy: 98.6, status: 'Matched'},
+    { day: 'Sun', date: 'Sep 21', actual: 2680, predicted: 2610, optimalBuffer: 2710, weather: 'Rain Surge', accuracy: 97.4, status: 'Buffer Protected'},
+    { day: 'Mon', date: 'Sep 22', actual: 2410, predicted: 2430, optimalBuffer: 2515, weather: 'Clear', accuracy: 99.2, status: 'Matched'},
+    { day: 'Tue', date: 'Sep 23', actual: 2290, predicted: 2270, optimalBuffer: 2355, weather: 'Meatless', accuracy: 99.1, status: 'Matched'},
+    { day: 'Wed', date: 'Today', actual: 2486, predicted: 2450, optimalBuffer: 2540, weather: 'Storm Alert', accuracy: 98.5, status: 'Matched'},
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2520, optimalBuffer: 2615, weather: '32.6°C', accuracy: null, status: 'XGBoost Inferred'}
   ],
   amaravati: [
-    { day: 'Thu', date: 'Sep 18', actual: 2710, predicted: 2680, optimalBuffer: 2760, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
-    { day: 'Fri', date: 'Sep 19', actual: 2830, predicted: 2800, optimalBuffer: 2885, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
-    { day: 'Sat', date: 'Sep 20', actual: 1620, predicted: 1650, optimalBuffer: 1720, weather: 'Weekend', accuracy: 98.2, status: 'Matched' },
-    { day: 'Sun', date: 'Sep 21', actual: 1480, predicted: 1450, optimalBuffer: 1530, weather: 'Weekend', accuracy: 98.0, status: 'Matched' },
-    { day: 'Mon', date: 'Sep 22', actual: 2790, predicted: 2760, optimalBuffer: 2850, weather: '🏛️ Session', accuracy: 98.9, status: 'Matched' },
-    { day: 'Tue', date: 'Sep 23', actual: 2750, predicted: 2720, optimalBuffer: 2810, weather: '🥦 Meatless', accuracy: 98.9, status: 'Matched' },
-    { day: 'Wed', date: 'Today', actual: 2840, predicted: 2815, optimalBuffer: 2905, weather: '☀️ 29.5°C', accuracy: 99.1, status: 'Matched' },
-    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2890, optimalBuffer: 2980, weather: '🌤️ Session Day 4', accuracy: null, status: 'XGBoost Inferred' }
+    { day: 'Thu', date: 'Sep 18', actual: 2710, predicted: 2680, optimalBuffer: 2760, weather: 'Session', accuracy: 98.9, status: 'Matched'},
+    { day: 'Fri', date: 'Sep 19', actual: 2830, predicted: 2800, optimalBuffer: 2885, weather: 'Session', accuracy: 98.9, status: 'Matched'},
+    { day: 'Sat', date: 'Sep 20', actual: 1620, predicted: 1650, optimalBuffer: 1720, weather: 'Weekend', accuracy: 98.2, status: 'Matched'},
+    { day: 'Sun', date: 'Sep 21', actual: 1480, predicted: 1450, optimalBuffer: 1530, weather: 'Weekend', accuracy: 98.0, status: 'Matched'},
+    { day: 'Mon', date: 'Sep 22', actual: 2790, predicted: 2760, optimalBuffer: 2850, weather: 'Session', accuracy: 98.9, status: 'Matched'},
+    { day: 'Tue', date: 'Sep 23', actual: 2750, predicted: 2720, optimalBuffer: 2810, weather: 'Meatless', accuracy: 98.9, status: 'Matched'},
+    { day: 'Wed', date: 'Today', actual: 2840, predicted: 2815, optimalBuffer: 2905, weather: '29.5°C', accuracy: 99.1, status: 'Matched'},
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 2890, optimalBuffer: 2980, weather: 'Session Day 4', accuracy: null, status: 'XGBoost Inferred'}
   ],
   vijayawada: [
-    { day: 'Thu', date: 'Sep 18', actual: 3120, predicted: 3080, optimalBuffer: 3200, weather: '🚆 Peak Transit', accuracy: 98.7, status: 'Matched' },
-    { day: 'Fri', date: 'Sep 19', actual: 3450, predicted: 3380, optimalBuffer: 3510, weather: '🚆 Holiday Rush', accuracy: 97.9, status: 'Buffer Protected' },
-    { day: 'Sat', date: 'Sep 20', actual: 3380, predicted: 3320, optimalBuffer: 3460, weather: 'Transit High', accuracy: 98.2, status: 'Matched' },
-    { day: 'Sun', date: 'Sep 21', actual: 3560, predicted: 3490, optimalBuffer: 3620, weather: 'Return Rush', accuracy: 98.0, status: 'Buffer Protected' },
-    { day: 'Mon', date: 'Sep 22', actual: 3190, predicted: 3150, optimalBuffer: 3270, weather: 'Normal', accuracy: 98.7, status: 'Matched' },
-    { day: 'Tue', date: 'Sep 23', actual: 2980, predicted: 2940, optimalBuffer: 3050, weather: '🥦 Meatless', accuracy: 98.7, status: 'Matched' },
-    { day: 'Wed', date: 'Today', actual: 3250, predicted: 3210, optimalBuffer: 3340, weather: '🌤️ 31.8°C', accuracy: 98.8, status: 'Matched' },
-    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 3310, optimalBuffer: 3445, weather: '🚆 Normal Schedule', accuracy: null, status: 'XGBoost Inferred' }
+    { day: 'Thu', date: 'Sep 18', actual: 3120, predicted: 3080, optimalBuffer: 3200, weather: 'Peak Transit', accuracy: 98.7, status: 'Matched'},
+    { day: 'Fri', date: 'Sep 19', actual: 3450, predicted: 3380, optimalBuffer: 3510, weather: 'Holiday Rush', accuracy: 97.9, status: 'Buffer Protected'},
+    { day: 'Sat', date: 'Sep 20', actual: 3380, predicted: 3320, optimalBuffer: 3460, weather: 'Transit High', accuracy: 98.2, status: 'Matched'},
+    { day: 'Sun', date: 'Sep 21', actual: 3560, predicted: 3490, optimalBuffer: 3620, weather: 'Return Rush', accuracy: 98.0, status: 'Buffer Protected'},
+    { day: 'Mon', date: 'Sep 22', actual: 3190, predicted: 3150, optimalBuffer: 3270, weather: 'Normal', accuracy: 98.7, status: 'Matched'},
+    { day: 'Tue', date: 'Sep 23', actual: 2980, predicted: 2940, optimalBuffer: 3050, weather: 'Meatless', accuracy: 98.7, status: 'Matched'},
+    { day: 'Wed', date: 'Today', actual: 3250, predicted: 3210, optimalBuffer: 3340, weather: '31.8°C', accuracy: 98.8, status: 'Matched'},
+    { day: 'Thu', date: 'Tomorrow', actual: null, predicted: 3310, optimalBuffer: 3445, weather: 'Normal Schedule', accuracy: null, status: 'XGBoost Inferred'}
   ]
 };
 

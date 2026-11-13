@@ -1,5 +1,5 @@
 // frontend/src/pages/FoodLogging.jsx
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { 
@@ -121,8 +121,26 @@ export default function FoodLogging() {
     return FLOOR_EXECUTIVES[selectedDistrict] || FLOOR_EXECUTIVES.guntur;
   }, [selectedDistrict]);
 
+  // Helper to check if a user is the designated floor executive under Rule 3.4
+  const isUserMatchingExecutive = useCallback((user, exec) => {
+    if (!user || !exec) return false;
+    // Admins are statewide supervisors and cannot sign floor scrap sheets as a floor chef
+    if (user.role === 'ADMIN') return false;
+
+    const idMatch = user.id === exec.executiveId;
+    const nameMatch = user.name && exec.executiveName &&
+      user.name.trim().toLowerCase() === exec.executiveName.trim().toLowerCase();
+    const districtAndChefMatch = user.assignedDistrict && exec.district &&
+      user.assignedDistrict.toLowerCase() === exec.district.toLowerCase() &&
+      (user.name?.toLowerCase().includes(exec.executiveName.split(' ')[0].toLowerCase()));
+
+    return idMatch || nameMatch || districtAndChefMatch;
+  }, []);
+
   // Authorization Check: Only the Executive of THIS specific floor can submit!
-  const isAuthorizedFloorExecutive = currentUser.id === currentFloorExec.executiveId;
+  const isAuthorizedFloorExecutive = useMemo(() => {
+    return isUserMatchingExecutive(currentUser, currentFloorExec);
+  }, [currentUser, currentFloorExec, isUserMatchingExecutive]);
 
   // Foodstuff Form State
   const [itemName, setItemName] = useState('Gongura Rice');
@@ -160,13 +178,17 @@ export default function FoodLogging() {
   const [isSyncingScale, setIsSyncingScale] = useState(false);
 
   // Poll IoT Scale endpoint every 2 seconds
-  const syncLatestScale = async (manual = false) => {
+  const syncLatestScale = useCallback(async (manual = false) => {
     try {
       setIsSyncingScale(true);
-      const res = await axios.get(`${API_BASE}/scale/latest`);
+      const res = await axios.get(`${API_BASE}/scale/latest`, { timeout: 3000 });
       if (res.data && res.data.grossWeightKg !== undefined) {
         setScaleTelemetry(res.data);
-        setIsScaleOnline(true);
+
+        // Consider online only if reading was captured in the last 45 seconds
+        const readingTime = res.data.timestamp ? new Date(res.data.timestamp).getTime() : 0;
+        const isRecent = (Date.now() - readingTime) < 45000;
+        setIsScaleOnline(isRecent);
 
         const isNewReading = res.data.timestamp && res.data.timestamp !== lastSyncedTime;
         if (isNewReading || manual) {
@@ -214,17 +236,31 @@ export default function FoodLogging() {
 
           if (manual || isNewReading) {
             const timeStr = new Date(res.data.timestamp || Date.now()).toLocaleTimeString();
-            setSuccessMessage('📡 Raspberry Pi Scale synced: ' + grossNum + ' kg at ' + timeStr);
+            if (isRecent) {
+              setSuccessMessage('📡 Raspberry Pi Scale synced: ' + grossNum + ' kg at ' + timeStr);
+            } else {
+              setSuccessMessage('⚠️ Scale offline: Last known reading was at ' + timeStr);
+            }
             setTimeout(() => setSuccessMessage(null), 5000);
           }
+        }
+      } else {
+        setIsScaleOnline(false);
+        if (manual) {
+          setSuccessMessage('⚠️ No active Raspberry Pi scale detected. Hardware is offline.');
+          setTimeout(() => setSuccessMessage(null), 4000);
         }
       }
     } catch {
       setIsScaleOnline(false);
+      if (manual) {
+        setSuccessMessage('⚠️ Unable to connect to backend scale gateway.');
+        setTimeout(() => setSuccessMessage(null), 4000);
+      }
     } finally {
       setIsSyncingScale(false);
     }
-  };
+  }, [lastSyncedTime, itemName, category, mealSlot, costPerKg, selectedDistrict, setSelectedDistrict]);
 
   useEffect(() => {
     syncLatestScale(false);
@@ -232,7 +268,7 @@ export default function FoodLogging() {
       syncLatestScale(false);
     }, 2000);
     return () => clearInterval(interval);
-  }, [lastSyncedTime, itemName, category, mealSlot, costPerKg, selectedDistrict]);
+  }, [syncLatestScale]);
 
   // Net weight calculated live
   const netWeightKg = useMemo(() => {
@@ -315,7 +351,11 @@ export default function FoodLogging() {
 
   // Quick switch user to the designated Floor Executive
   const handleSimulateFloorExecutive = () => {
-    const targetUser = USERS.find(u => u.id === currentFloorExec.executiveId);
+    const targetUser = USERS.find(u => 
+      u.id === currentFloorExec.executiveId ||
+      u.assignedDistrict?.toLowerCase() === currentFloorExec.district?.toLowerCase() ||
+      u.name.trim().toLowerCase() === currentFloorExec.executiveName.trim().toLowerCase()
+    );
     if (targetUser) {
       switchUser(targetUser);
     }
@@ -707,19 +747,22 @@ export default function FoodLogging() {
           >
             {/* Top terminal badge */}
             <div className="flex items-center justify-between text-xs text-neutral-400 font-mono pb-3 border-b border-white/10 mb-4">
-              <span className="flex items-center gap-1.5 text-emerald-400">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+              <span className={`flex items-center gap-1.5 transition-colors ${isScaleOnline ? 'text-emerald-400' : 'text-neutral-400'}`}>
+                <span className={`w-2 h-2 rounded-full transition-all ${isScaleOnline ? 'bg-emerald-400 animate-ping' : 'bg-neutral-500'}`} />
                 {isScaleOnline ? 'RASPBERRY PI SCALE • LIVE' : 'OFFLINE SCALE #01'}
               </span>
-              <button
-                type="button"
-                onClick={() => syncLatestScale(true)}
-                title="Force sync from Raspberry Pi scale"
-                className="px-2 py-0.5 bg-white/10 hover:bg-white/20 text-white rounded text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
-              >
-                <RotateCcw className={`w-3 h-3 ${isSyncingScale ? 'animate-spin' : ''}`} />
-                <span>Sync Scale</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <span>TARE: {tarePreset} kg</span>
+                <button
+                  type="button"
+                  onClick={() => syncLatestScale(true)}
+                  title="Force sync from Raspberry Pi scale"
+                  className="px-2 py-0.5 bg-white/10 hover:bg-white/20 text-white rounded text-[10px] flex items-center gap-1 transition-colors cursor-pointer"
+                >
+                  <RotateCcw className={`w-3 h-3 ${isSyncingScale ? 'animate-spin' : ''}`} />
+                  <span>Sync Scale</span>
+                </button>
+              </div>
             </div>
 
             {/* Glowing Big Digital Mass Readout */}
@@ -735,9 +778,16 @@ export default function FoodLogging() {
                 Gross: {grossWeight} kg • Pan Deduction: -{tarePreset} kg
               </div>
               {scaleTelemetry?.timestamp && (
-                <div className="text-[10px] text-emerald-300 font-mono mt-2 inline-flex items-center gap-1.5 bg-emerald-950/60 py-0.5 px-2.5 rounded-full border border-emerald-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>Last Pi Stream: {new Date(scaleTelemetry.timestamp).toLocaleTimeString()} ({scaleTelemetry.district?.toUpperCase()})</span>
+                <div className={`text-[10px] font-mono mt-2 inline-flex items-center gap-1.5 py-0.5 px-2.5 rounded-full border ${
+                  isScaleOnline 
+                    ? 'text-emerald-300 bg-emerald-950/60 border-emerald-500/30' 
+                    : 'text-neutral-400 bg-neutral-900/60 border-neutral-700/40'
+                }`}>
+                  <span className={`w-1.5 h-1.5 rounded-full ${isScaleOnline ? 'bg-emerald-400 animate-pulse' : 'bg-neutral-500'}`} />
+                  <span>
+                    Last Pi Stream: {new Date(scaleTelemetry.timestamp).toLocaleTimeString()} ({scaleTelemetry.district?.toUpperCase() || 'UNKNOWN'})
+                    {!isScaleOnline && ' — Offline'}
+                  </span>
                 </div>
               )}
             </div>
@@ -756,8 +806,11 @@ export default function FoodLogging() {
 
             {/* Digital Scale Footnote */}
             <div className="mt-4 text-[10px] font-mono text-neutral-400 flex items-center justify-between">
-              <span>Sensor: Precision Strain-Gauge</span>
-              <span>Auto-Calibration: OK</span>
+              <span>Sensor: Precision Strain-Gauge (HX711)</span>
+              <span className={`inline-flex items-center gap-1 ${isScaleOnline ? 'text-emerald-400' : 'text-neutral-500'}`}>
+                <span className={`w-1.5 h-1.5 rounded-full ${isScaleOnline ? 'bg-emerald-400' : 'bg-neutral-500'}`} />
+                {isScaleOnline ? 'Hardware: Connected' : 'Hardware: Offline'}
+              </span>
             </div>
           </div>
 
@@ -779,7 +832,7 @@ export default function FoodLogging() {
             <div className="mt-3.5 pt-3 border-t border-[#e5e2e1] space-y-2">
               {Object.entries(FLOOR_EXECUTIVES).map(([distKey, exec]) => {
                 const isThisFloor = selectedDistrict === distKey;
-                const isThisUser = currentUser.id === exec.executiveId;
+                const isThisUser = isUserMatchingExecutive(currentUser, exec);
                 return (
                   <div 
                     key={distKey}
@@ -801,7 +854,11 @@ export default function FoodLogging() {
                     ) : (
                       <button
                         onClick={() => {
-                          const u = USERS.find(user => user.id === exec.executiveId);
+                          const u = USERS.find(user => 
+                            user.id === exec.executiveId ||
+                            user.assignedDistrict?.toLowerCase() === exec.district.toLowerCase() ||
+                            user.name.trim().toLowerCase() === exec.executiveName.trim().toLowerCase()
+                          );
                           if (u) switchUser(u);
                         }}
                         className="text-[10px] font-mono text-[#c76c00] hover:underline cursor-pointer"

@@ -1,16 +1,19 @@
 // frontend/src/components/layout/Header.jsx
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Bell, 
-  Lock,
-  Compass,
-  ChevronDown,
-  Sliders,
-  Eye,
-  Scale
+  Lock, 
+  Compass, 
+  ChevronDown, 
+  Sliders, 
+  Eye, 
+  Scale,
+  LogOut,
+  Check
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { useAuth } from '../../context/AuthContext';
 import { DISTRICT_METADATA } from '../../data/mockCanteenData';
 import PersonaSwitcher from './PersonaSwitcher';
 import MlConnectionIndicator from './MlConnectionIndicator';
@@ -39,17 +42,21 @@ export default function Header() {
     toggleNerdMode
   } = useDashboard();
 
+  const { logout } = useAuth();
+  const navigate = useNavigate();
   const location = useLocation();
   const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
   const [isMobileSectionOpen, setIsMobileSectionOpen] = useState(false);
+  const [isDistrictDropdownOpen, setIsDistrictDropdownOpen] = useState(false);
   const headerMenuRef = useRef(null);
   const mobileNavRef = useRef(null);
+  const districtMenuRef = useRef(null);
 
   const visibleMobileItems = useMemo(() => {
     return MOBILE_NAV_ITEMS.filter(item => !item.adminOnly || isAdmin);
   }, [isAdmin]);
 
-  // Close dropdown on outside click
+  // Close dropdowns on outside click
   useEffect(() => {
     function handleClickOutside(event) {
       if (headerMenuRef.current && !headerMenuRef.current.contains(event.target)) {
@@ -58,46 +65,105 @@ export default function Header() {
       if (mobileNavRef.current && !mobileNavRef.current.contains(event.target)) {
         setIsMobileSectionOpen(false);
       }
+      if (districtMenuRef.current && !districtMenuRef.current.contains(event.target)) {
+        setIsDistrictDropdownOpen(false);
+      }
     }
-    if (isHeaderMenuOpen || isMobileSectionOpen) {
+    if (isHeaderMenuOpen || isMobileSectionOpen || isDistrictDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
     }
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isHeaderMenuOpen, isMobileSectionOpen]);
+  }, [isHeaderMenuOpen, isMobileSectionOpen, isDistrictDropdownOpen]);
 
   return (
-    <header className="w-full border-b border-[#e5e2e1]/80 bg-[#fdf8f7]/90 backdrop-blur-md py-3 px-4 sm:px-6 md:px-12 flex items-center justify-between sticky top-0 z-40">
-      {/* Brand & Active Subtitle */}
-      <div className="flex items-center gap-2.5 sm:gap-3">
-        <a href="#dashboard" className="flex items-center gap-2.5">
+    <header className="relative w-full border-b border-[#e5e2e1]/80 bg-[#fdf8f7]/90 backdrop-blur-md py-2.5 px-4 sm:px-6 md:px-12 flex items-center justify-between sticky top-0 z-40">
+      {/* Brand & Contextual District Switcher */}
+      <div className="flex items-center gap-2.5 sm:gap-3 z-0">
+        <Link to="/" className="flex items-center gap-2.5 group">
           <img 
             src="/logo-icon.png" 
             alt="Smart Canteen Logo" 
-            className="w-8 h-8 md:w-9 md:h-9 object-contain shrink-0 drop-shadow-xs transition-transform hover:scale-105" 
+            className="w-8 h-8 md:w-9 md:h-9 object-contain shrink-0 drop-shadow-xs transition-transform group-hover:scale-105" 
           />
-          <div className="flex flex-col sm:flex-row sm:items-baseline sm:gap-2.5">
-            <span className="font-space text-base sm:text-lg font-bold tracking-tight text-[#1c1b1b]">
+          <div className="flex flex-col">
+            <span className="font-space text-base sm:text-lg font-bold tracking-tight text-[#1c1b1b] leading-tight">
               Smart Canteen
             </span>
-            <span className="text-[11px] sm:text-xs text-[#777771] font-medium flex items-center gap-1.5">
-              <span>Central Kitchen • {currentDistrictMeta.fullName}</span>
-              {!isAdmin && (
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] bg-[#ebe7e6] text-[#474741] font-mono">
-                  <Lock className="w-2.5 h-2.5" /> Locked
+            <div className="text-[11px] sm:text-xs text-[#777771] font-medium flex items-center gap-1.5 leading-tight mt-0.5">
+              <span>Central Kitchen</span>
+              <span>•</span>
+              {isAdmin ? (
+                <div className="relative inline-flex items-center" ref={districtMenuRef}>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsDistrictDropdownOpen(!isDistrictDropdownOpen);
+                    }}
+                    className="inline-flex items-center gap-1 font-semibold text-[#1c1b1b] hover:text-[#c76c00] transition-colors underline decoration-dotted underline-offset-2 cursor-pointer"
+                    title="Switch Regional District"
+                  >
+                    <span>{currentDistrictMeta.name}</span>
+                    <ChevronDown className="w-3 h-3 text-[#777771]" />
+                  </button>
+
+                  {isDistrictDropdownOpen && (
+                    <div className="absolute left-0 top-full mt-2 w-64 bg-white/95 backdrop-blur-md rounded-xl shadow-lg border border-[#e5e2e1] p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100">
+                      <div className="px-2 py-1 text-[10px] font-space font-bold uppercase tracking-wider text-[#777771]">
+                        Switch Regional Network
+                      </div>
+                      {Object.entries(DISTRICT_METADATA).map(([key, meta]) => {
+                        const isSelected = selectedDistrict === key;
+                        return (
+                          <button
+                            key={key}
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setSelectedDistrict(key);
+                              setIsDistrictDropdownOpen(false);
+                            }}
+                            className={`w-full text-left px-2.5 py-2 rounded-lg text-xs font-space flex items-center justify-between transition-colors ${
+                              isSelected
+                                ? 'bg-[#1c1b1b] text-white font-bold'
+                                : 'text-[#1c1b1b] hover:bg-[#f1edec]'
+                            }`}
+                          >
+                            <div className="flex flex-col">
+                              <span className="font-medium">{meta.fullName}</span>
+                              <span className={`text-[10px] ${isSelected ? 'text-white/70' : 'text-[#777771]'}`}>
+                                {meta.clusterName}
+                              </span>
+                            </div>
+                            {isSelected && (
+                              <Check className="w-3.5 h-3.5 text-white shrink-0 ml-2" />
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <span className="flex items-center gap-1 text-[#474741]">
+                  <span>{currentDistrictMeta.fullName}</span>
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[10px] bg-[#ebe7e6] text-[#474741] font-mono">
+                    <Lock className="w-2.5 h-2.5" /> Locked
+                  </span>
                 </span>
               )}
-            </span>
+            </div>
           </div>
-        </a>
+        </Link>
       </div>
 
-      {/* Navigation Tabs: Dashboard vs Food Weight Logging */}
-      <div className="hidden lg:flex items-center bg-[#f1edec] p-0.5 rounded-full border border-[#e5e2e1] text-xs font-space ml-2 sm:ml-4">
+      {/* Navigation Segmented Switcher: Exact Geometric Center of the Viewport */}
+      <div className="hidden md:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 items-center bg-[#f1edec] p-0.5 rounded-full border border-[#e5e2e1] text-xs font-space shadow-2xs z-10 pointer-events-auto">
         <Link
           to="/"
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+          className={`px-3.5 py-1 rounded-full text-xs font-medium transition-all ${
             location.pathname === '/' 
               ? 'bg-[#1c1b1b] text-white font-bold shadow-2xs' 
               : 'text-[#777771] hover:text-[#1c1b1b]'
@@ -107,7 +173,7 @@ export default function Header() {
         </Link>
         <Link
           to="/log"
-          className={`px-3 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
+          className={`px-3.5 py-1 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
             location.pathname === '/log' || location.pathname === '/logging'
               ? 'bg-[#c76c00] text-white font-bold shadow-2xs' 
               : 'text-[#777771] hover:text-[#1c1b1b]'
@@ -118,24 +184,8 @@ export default function Header() {
         </Link>
       </div>
 
-      {/* Right Action Icons & District Selector */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        {/* Quick Link to Food Weight Logging Page */}
-        <Link
-          to={location.pathname === '/log' || location.pathname === '/logging' ? '/' : '/log'}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-space transition-all duration-200 select-none shadow-2xs cursor-pointer ${
-            location.pathname === '/log' || location.pathname === '/logging'
-              ? 'bg-[#c76c00] text-white border-[#c76c00] font-bold shadow-xs'
-              : 'bg-white text-[#1c1b1b] border-[#1c1b1b] hover:bg-neutral-100 font-medium'
-          }`}
-          title="Open Floor Scale Logging Terminal"
-        >
-          <Scale className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">
-            {location.pathname === '/log' || location.pathname === '/logging' ? 'Dashboard' : 'Log Food'}
-          </span>
-        </Link>
-
+      {/* Right Action Icons & Profile */}
+      <div className="flex items-center gap-2 sm:gap-2.5 z-0">
         {/* ML Model Connection Health Indicator */}
         <MlConnectionIndicator />
 
@@ -144,7 +194,7 @@ export default function Header() {
           type="button"
           onClick={toggleNerdMode}
           title={isNerdMode ? 'Switch to Simple Floor View' : 'Switch to Detailed Telemetry (Nerd Mode)'}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-space transition-all duration-200 select-none shadow-2xs cursor-pointer ${
+          className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-full border text-xs font-space transition-all duration-200 select-none shadow-2xs cursor-pointer ${
             isNerdMode
               ? 'bg-[#1c1b1b] text-white border-[#1c1b1b] shadow-xs'
               : 'bg-white text-[#1c1b1b] border-[#1c1b1b] hover:bg-neutral-100'
@@ -167,33 +217,11 @@ export default function Header() {
           )}
         </button>
 
-        {/* Admin District Selector Tabs */}
-        {isAdmin && (
-          <div className="hidden sm:flex items-center bg-[#f1edec] rounded p-0.5 border border-[#e5e2e1] text-xs font-space">
-            {Object.keys(DISTRICT_METADATA).map((distKey) => {
-              const isSelected = selectedDistrict === distKey;
-              return (
-                <button
-                  key={distKey}
-                  onClick={() => setSelectedDistrict(distKey)}
-                  className={`px-2.5 py-1 text-xs font-medium rounded-xs transition-all capitalize ${
-                    isSelected
-                      ? 'bg-[#1c1b1b] text-white font-bold shadow-2xs'
-                      : 'text-[#777771] hover:text-[#1c1b1b]'
-                  }`}
-                >
-                  {distKey}
-                </button>
-              );
-            })}
-          </div>
-        )}
-
         {/* Mobile Section Nav Trigger */}
         <div className="relative md:hidden" ref={mobileNavRef}>
           <button
             onClick={() => setIsMobileSectionOpen(!isMobileSectionOpen)}
-            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-white border border-[#e5e2e1] rounded-xl text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors"
+            className="flex items-center gap-1 px-2.5 py-1.5 text-xs font-semibold bg-white border border-[#e5e2e1] rounded-xl text-slate-700 shadow-2xs hover:bg-slate-50 transition-colors cursor-pointer"
             title="Jump to Section"
           >
             <Compass className="w-3.5 h-3.5 text-slate-800" />
@@ -203,6 +231,18 @@ export default function Header() {
 
           {isMobileSectionOpen && (
             <div className="absolute right-0 top-full mt-2 w-60 bg-white/98 backdrop-blur-2xl rounded-2xl shadow-2xl border border-slate-200 ring-1 ring-slate-900/5 p-2 z-50 animate-in fade-in zoom-in-95 duration-100">
+              {/* Mobile Quick Scale Link */}
+              <Link
+                to={location.pathname === '/log' || location.pathname === '/logging' ? '/' : '/log'}
+                onClick={() => setIsMobileSectionOpen(false)}
+                className="p-2 border-b border-slate-100 flex items-center justify-between mb-1 text-xs font-bold text-[#c76c00] font-space hover:bg-amber-50 rounded-lg"
+              >
+                <span className="flex items-center gap-1.5">
+                  <Scale className="w-3.5 h-3.5" />
+                  <span>{location.pathname === '/log' ? 'Back to Dashboard' : 'Floor Scale Terminal'}</span>
+                </span>
+              </Link>
+
               {/* Mobile Nerd Mode toggle */}
               <div className="p-2 border-b border-slate-100 flex items-center justify-between mb-1">
                 <span className="text-xs font-bold text-slate-800 font-space flex items-center gap-1.5">
@@ -247,7 +287,7 @@ export default function Header() {
         {/* Notification Bell */}
         <button 
           onClick={() => alert('No unacknowledged food waste alarms.')}
-          className="p-1.5 text-[#474741] hover:text-[#1c1b1b] hover:bg-[#f1edec] rounded-lg transition-colors"
+          className="p-1.5 text-[#474741] hover:text-[#1c1b1b] hover:bg-[#f1edec] rounded-lg transition-colors cursor-pointer"
           title="Notifications"
         >
           <Bell className="w-4 h-4 stroke-[1.75]" />
@@ -258,13 +298,13 @@ export default function Header() {
           <button 
             id="header-avatar-btn"
             onClick={() => setIsHeaderMenuOpen(!isHeaderMenuOpen)}
-            className="flex items-center gap-2 p-1 sm:pl-2.5 sm:pr-1 rounded-full border border-[#e5e2e1] hover:border-[#1c1b1b] bg-white/80 hover:bg-white transition-all shadow-xs"
-            title={`Logged in as: ${currentUser.name} (${currentUser.role}) - Click to switch persona`}
+            className="flex items-center gap-2 p-1 sm:pl-2.5 sm:pr-1 rounded-full border border-[#e5e2e1] hover:border-[#1c1b1b] bg-white/80 hover:bg-white transition-all shadow-xs cursor-pointer"
+            title={`Logged in as: ${currentUser.name} (${currentUser.role})`}
           >
             <div className="text-right hidden sm:block">
               <p className="text-xs font-bold text-slate-900 leading-tight truncate max-w-[120px]">{currentUser.name}</p>
               <p className="text-[10px] text-slate-500 font-mono capitalize leading-tight">
-                {isAdmin ? '👑 Statewide' : `🔒 ${currentUser.assignedDistrict}`}
+                {isAdmin ? 'Statewide' : currentUser.assignedDistrict}
               </p>
             </div>
             <div className="relative">
@@ -288,6 +328,18 @@ export default function Header() {
             />
           )}
         </div>
+
+        {/* Dedicated Quick Sign Out Button (Kept right where it is) */}
+        <button
+          onClick={() => {
+            logout();
+            navigate('/login');
+          }}
+          className="p-1.5 text-[#474741] hover:text-[#ba1a1a] hover:bg-[#ffdad6]/40 rounded-lg transition-colors cursor-pointer"
+          title="Sign Out Session"
+        >
+          <LogOut className="w-4 h-4 stroke-[1.75]" />
+        </button>
       </div>
     </header>
   );

@@ -1,5 +1,5 @@
-// frontend/src/components/layout/PersonaSwitcher.jsx
 import React, { useState, useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, 
   ChefHat, 
@@ -7,11 +7,15 @@ import {
   Lock, 
   Globe2, 
   X, 
-  UserCheck 
+  UserCheck,
+  LogOut 
 } from 'lucide-react';
 import { useDashboard } from '../../context/DashboardContext';
+import { useAuth } from '../../context/AuthContext';
 
 export default function PersonaSwitcher({ placement = 'right', onClose }) {
+  const navigate = useNavigate();
+  const { logout } = useAuth();
   const { 
     currentUser, 
     switchUser, 
@@ -94,7 +98,7 @@ export default function PersonaSwitcher({ placement = 'right', onClose }) {
             activeTab === 'admin' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'hover:text-slate-900'
           }`}
         >
-          👑 Admins ({adminUsers.length})
+          Admins ({adminUsers.length})
         </button>
         <button
           onClick={() => setActiveTab('kitchen')}
@@ -102,7 +106,7 @@ export default function PersonaSwitcher({ placement = 'right', onClose }) {
             activeTab === 'kitchen' ? 'bg-white text-slate-900 font-bold shadow-xs' : 'hover:text-slate-900'
           }`}
         >
-          👨‍🍳 Users ({kitchenUsers.length})
+          Kitchen Staff ({kitchenUsers.length})
         </button>
       </div>
 
@@ -183,8 +187,22 @@ export default function PersonaSwitcher({ placement = 'right', onClose }) {
         })}
       </div>
 
+      {/* Sign Out Button */}
+      <button
+        type="button"
+        onClick={() => {
+          logout();
+          if (onClose) onClose();
+          navigate('/login');
+        }}
+        className="mt-2.5 w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 text-xs font-space font-bold transition-all cursor-pointer shadow-2xs"
+      >
+        <LogOut className="w-3.5 h-3.5" />
+        <span>Sign Out Session</span>
+      </button>
+
       {/* Bottom Hint */}
-      <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
+      <div className="mt-2 pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-500">
         <span>Click to switch RBAC view</span>
         <span className="font-mono text-[9px] text-slate-400">{filteredUsers.length} profiles</span>
       </div>

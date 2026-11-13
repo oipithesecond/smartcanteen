@@ -84,6 +84,17 @@ def prepare_dataframe(records: list) -> pd.DataFrame:
     df['macro_dietary_period'] = df['macro_dietary_period'].astype(MACRO_CAT_DTYPE)
     return df
 
+@app.get("/")
+def root():
+    return {
+        "service": "Smart Canteen ML Microservice",
+        "status": "online",
+        "model_loaded": model is not None,
+        "rmse": RMSE_ESTIMATE,
+        "docs_url": "/docs",
+        "health_url": "/health"
+    }
+
 @app.get("/health")
 def health():
     return {

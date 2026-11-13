@@ -409,7 +409,6 @@ exports.getOpenLogs = async (req, res) => {
     }
 };
 
-
 // In-memory cache for latest IoT scale telemetry
 let latestScaleReading = null;
 
@@ -508,5 +507,26 @@ exports.logScaleReading = async (req, res) => {
 };
 
 exports.getLatestScaleReading = (req, res) => {
-    res.status(200).json(latestScaleReading || { status: 'No scale reading received yet' });
+    if (!latestScaleReading) {
+        return res.status(200).json({
+            isOnline: false,
+            status: 'Offline: No physical Raspberry Pi connected'
+        });
+    }
+
+    const ageMs = Date.now() - new Date(latestScaleReading.timestamp).getTime();
+    // Hardware is considered online ONLY if actively streaming within the last 15 seconds
+    const isOnline = ageMs < 15000;
+
+    return res.status(200).json({
+        ...latestScaleReading,
+        isOnline,
+        ageSeconds: Math.round(ageMs / 1000)
+    });
 };
+
+exports.resetScaleReading = (req, res) => {
+    latestScaleReading = null;
+    res.status(200).json({ message: 'Scale telemetry reset. Scale is now offline.' });
+};
+

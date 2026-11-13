@@ -2,13 +2,56 @@
 import React, { createContext, useContext, useState, useMemo, useCallback, useEffect } from 'react';
 import axios from 'axios';
 import { DISTRICT_METADATA, getAugmentedBatchCookPlan, USERS } from '../data/mockCanteenData';
+import { useAuth } from './AuthContext';
 
 const DashboardContext = createContext(null);
 const API_BASE = 'http://localhost:5005/api';
 
 export function DashboardProvider({ children }) {
-  const [currentUser, setCurrentUser] = useState(USERS[1]); // Default to Guntur Floor Chef
-  const [selectedDistrict, setSelectedDistrictState] = useState(USERS[1].assignedDistrict);
+  const auth = useAuth();
+  const authUser = auth?.currentUser;
+
+  const [currentUser, setCurrentUser] = useState(() => {
+    if (authUser) {
+      return {
+        id: authUser.id,
+        name: authUser.name,
+        role: authUser.role,
+        roleLabel: authUser.role === 'ADMIN' ? 'Admin (State Dining Director)' : 'Manager (Kitchen Floor)',
+        title: authUser.title || 'Staff',
+        assignedDistrict: authUser.role === 'ADMIN' ? null : (authUser.assignedDistrict || 'guntur'),
+        department: authUser.department || 'AP State Canteens',
+        badge: authUser.badge || (authUser.role === 'ADMIN' ? 'Statewide Admin' : `${authUser.assignedDistrict} Floor`),
+        avatar: authUser.avatar || USERS[0].avatar
+      };
+    }
+    return USERS[1]; // Default fallback
+  });
+
+  const [selectedDistrict, setSelectedDistrictState] = useState(() => {
+    return (authUser?.role === 'OUTLET_MANAGER' && authUser?.assignedDistrict) ? authUser.assignedDistrict : 'amaravati';
+  });
+
+  // Keep currentUser and selectedDistrict in sync with logged-in user
+  useEffect(() => {
+    if (authUser) {
+      const formatted = {
+        id: authUser.id,
+        name: authUser.name,
+        role: authUser.role,
+        roleLabel: authUser.role === 'ADMIN' ? 'Admin (State Dining Director)' : 'Manager (Kitchen Floor)',
+        title: authUser.title || (authUser.role === 'ADMIN' ? 'State Dining Operations Director' : 'Kitchen Floor Manager'),
+        assignedDistrict: authUser.role === 'ADMIN' ? null : (authUser.assignedDistrict || 'guntur'),
+        department: authUser.department || 'AP State Canteens',
+        badge: authUser.badge || (authUser.role === 'ADMIN' ? 'Statewide Admin' : `${authUser.assignedDistrict} Floor`),
+        avatar: authUser.avatar || (authUser.role === 'ADMIN' ? USERS[0].avatar : USERS[1].avatar)
+      };
+      setCurrentUser(formatted);
+      if (authUser.role === 'OUTLET_MANAGER' && authUser.assignedDistrict) {
+        setSelectedDistrictState(authUser.assignedDistrict);
+      }
+    }
+  }, [authUser]);
   const [activeCategory, setActiveCategory] = useState('All');
   const [activeMealSlot, setActiveMealSlot] = useState('all');
   const [timeRange, setTimeRange] = useState('today');

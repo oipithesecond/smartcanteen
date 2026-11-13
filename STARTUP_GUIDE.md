@@ -81,10 +81,10 @@ To host all three services, open **three separate terminal / PowerShell windows*
 5. **Verify**:
    - Terminal prints:
      ```text
-     ℹ️ No MONGODB_URI found. Running in local operational mode (ML inference & weather active).
-     Node.js API Gateway running on port 5005
+     ✅ Connected to MongoDB Atlas (database: smartcanteen)
+     Node.js API Gateway running on http://0.0.0.0:5005
      ```
-     *(Note: MongoDB is optional; if no `MONGODB_URI` is provided, the backend operates in standalone local mode).*
+   - Test database connection by opening [http://localhost:5005/api/db-health](http://localhost:5005/api/db-health).
    - Test connectivity between Backend and ML Service by opening [http://localhost:5005/api/ml-health](http://localhost:5005/api/ml-health). It should return:
      ```json
      {
